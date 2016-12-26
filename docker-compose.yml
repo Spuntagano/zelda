@@ -1,0 +1,13 @@
+zelda:
+    build: .
+    volumes:
+        - /www/zelda:/www/zelda
+    ports:
+        - 2000:2000
+nginx:
+  build: ./nginx
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - /www/zelda:/www/zelda
