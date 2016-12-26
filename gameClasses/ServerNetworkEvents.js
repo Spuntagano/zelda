@@ -96,62 +96,35 @@ var ServerNetworkEvents = {
         var slashOffsetY = 0;
 
         Object.keys(ige.server.players).map(function (key) {
-          var position = ige.server.players[key].worldPosition();
-          var killed = false;
 
           switch (playerRotation) {
             case 'Up':
               slashOffsetX = 0;
               slashOffsetY = 10;
-              if (Math.abs(playerPosition.x - position.x) < 50 &&
-                playerPosition.y - position.y < 50 &&
-                playerPosition.y - position.y > 0
-              ) {
-                killed = true;
-              }
               break;
             case 'Right':
               slashOffsetX = -5;
               slashOffsetY = 5;
-              if (position.x - playerPosition.x < 50 &&
-                position.x - playerPosition.x > 0 &&
-                Math.abs(playerPosition.y - position.y) < 50) {
-                killed = true;
-              }
               break;
             case 'Left':
               slashOffsetX = 0;
               slashOffsetY = 4;
-              if (playerPosition.x - position.x < 50 &&
-                playerPosition.x - position.x > 0 &&
-                Math.abs(playerPosition.y - position.y) < 50) {
-                killed = true;
-              }
               break;
             case 'Down':
               slashOffsetX = 0;
               slashOffsetY = 8;
-              if (Math.abs(playerPosition.x - position.x) < 50 &&
-                position.y - playerPosition.y < 50 &&
-                position.y - playerPosition.y > 0) {
-                killed = true;
-              }
               break;
           }
 
-          //cant KYS
-          if (key === clientId) {
-            killed = false;
-          }
-
-          if (killed) {
-            ige.server.playerKilledHandler.playerKilled(ige.server.players[clientId], 'slashed', ige.server.players[key], key);
-          }
         });
-        var sword = new Sword(playerRotation)
-          .translateTo(playerPosition.x + slashOffsetX, playerPosition.y + slashOffsetY, playerPosition.z)
+        playerPosition.x += slashOffsetX;
+        playerPosition.y += slashOffsetY;
+        
+        var sword = new Sword({playerPosition: playerPosition, playerRotation: playerRotation, slashedBy: ige.server.players[clientId].id()})
           .streamMode(1)
           .mount(ige.server.scene1);
+
+        sword.slashedBy = ige.server.players[clientId];
 
         ige.network.send('playerControlSlash', ige.server.players[clientId].id());
         ige.server.players[clientId].controls.slash = true;

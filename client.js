@@ -16,6 +16,8 @@ var Client = IgeClass.extend({
 		this.implement(ClientNetworkEvents);
     this.players = {};
     this.ui = new UserInterface();
+    this.killList = [];
+    this.username = '';
 
     /*
     this.gameTexture = {};
@@ -115,6 +117,7 @@ var Client = IgeClass.extend({
             ige.box2d.contactListener(contactHandler.contactBegin(), contactHandler.contactEnd(), contactHandler.contactPreSolver());
 
             ige.network.send('playerEntity', self.ui.usernameTextBox.value());
+            self.username = self.ui.usernameTextBox.value();
             self.ui.hideLogin();
 
             //ige.network.debugMax(10);

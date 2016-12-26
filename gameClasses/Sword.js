@@ -1,13 +1,33 @@
-var Sword = IgeEntity.extend({
+var Sword = IgeEntityBox2d.extend({
   classId: 'Sword',
 
-  init: function (rotation) {
-    IgeEntity.prototype.init.call(this);
+  init: function (data) {
+    IgeEntityBox2d.prototype.init.call(this);
+
+    this.box2dBody({
+      type: 'dynamic',
+      linearDamping: 0.0,
+      angularDamping: 0.1,
+      allowSleep: false,
+      bullet: true,
+      fixedRotation: false,
+      fixtures: [{
+        density: 1.0,
+        friction: 0,
+        restitution: 0.0001,
+        shape: {
+          type: 'rectangle'
+        }
+      }]
+    });
+
 
     var self = this;
-
+    
+    this.data = data;
     this.drawBounds(true);
     this.depth(10);
+    this.translateTo(this.data.playerPosition.x, this.data.playerPosition.y, this.data.playerPosition.z)
 
     if (ige.isServer) {
       this.addComponent(IgeVelocityComponent);
@@ -15,6 +35,7 @@ var Sword = IgeEntity.extend({
 
     if (ige.isClient) {
       this.addComponent(IgeAnimationComponent);
+      this.slashedBy = ige.client.players[this.data.slashedBy];
       this._characterTexture = new IgeCellSheet('./assets/textures/sword.png', 12, 4);
 
       this._characterTexture.on('loaded', function () {
@@ -33,13 +54,11 @@ var Sword = IgeEntity.extend({
     }
 
     this._lastTranslate = this._translate.clone();
-    this.shotBy = {};
-    this.rotation = rotation;
-
+    this.rotation = this.data.playerRotation;
   },
 
   streamCreateData: function () {
-    return this.rotation;
+    return this.data;
   },
 
 
@@ -62,7 +81,7 @@ var Sword = IgeEntity.extend({
       }
     }
 
-    IgeEntity.prototype.update.call(this, ctx, tickDelta);
+    IgeEntityBox2d.prototype.update.call(this, ctx, tickDelta);
   },
 
   /**
@@ -73,7 +92,7 @@ var Sword = IgeEntity.extend({
   tick: function (ctx) {
 
     // Call the IgeEntity (super-class) tick() method
-    IgeEntity.prototype.tick.call(this, ctx);
+    IgeEntityBox2d.prototype.tick.call(this, ctx);
   }
 });
 

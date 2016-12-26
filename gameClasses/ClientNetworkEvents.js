@@ -36,7 +36,13 @@ var ClientNetworkEvents = {
 	},
 
   _onPlayerKilled: function (data) {
-    ige.client.ui.killBox.value(data.killer + ' ' + data.method + ' ' + data.killed);
+    ige.client.killList.push({
+      killer: data.killer,
+      method: data.method,
+      killed: data.killed,
+      timestamp: new Date()
+    });
+    
     if (ige.client.id === data.killedId) {
       ige.client.ui.displayLogin();
     }

@@ -27,7 +27,7 @@ var Player = IgeEntityBox2d.extend({
     });
     
     this.username = '';
-    this.translateTo(350, 350, 0)
+    this.translateTo(1000, 1000, 0);
 
 		// Rotate to point upwards
 		this.controls = {

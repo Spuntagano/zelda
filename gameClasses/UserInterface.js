@@ -33,23 +33,6 @@ var UserInterface = IgeClass.extend({
       'backgroundColor': '#ccc'
     });
 
-    ige.ui.style('#killBoxContainer', {
-      'backgroundColor': '#ffffff',
-      'borderColor': '#212121',
-      'borderWidth': 1,
-      'right': 0,
-      'top': 0,
-      'width': '30%',
-      'height': 30,
-      'font': '12px Open S    ans',
-      'color': '#000000'
-    });
-
-    ige.ui.style('#killBox', {
-      'left': '10%',
-      'right': '10%'
-    });
-
     self.mainScene = new IgeScene2d()
       .id('mainScene');
 
@@ -74,17 +57,8 @@ var UserInterface = IgeClass.extend({
 
     self.login = new IgeUiElement()
       .id('login')
+      .value((ige.client) ? ige.client.username : '')
       .mount(self.uiScene);
-
-    self.killBoxContainer = new IgeUiElement()
-      .id('killBoxContainer')
-      .mount(self.uiScene);
-
-    self.killBox = new IgeUiLabel()
-      .id('killBox')
-      .mount(self.killBoxContainer);
-
-
 
     self.usernameTextBox = new IgeUiTextBox()
       .id('usernameTextBox')
@@ -97,6 +71,34 @@ var UserInterface = IgeClass.extend({
       .id('submitBtn')
       .value('Submit')
       .mount(self.login);
+
+
+
+    ige.ui.style('.killBox', {
+      'left': 10,
+      'width': 1000,
+      'font': 'bold 16px Open Sans',
+      'color': '#000000'
+    });
+
+    new IgeInterval(function(){
+      ige.client.killList.map(function(kill, index){
+        if (kill.label) {
+          kill.label.unMount();
+        }
+
+        if (new Date() - 5*1000 < kill.timestamp) {
+          value = kill.killer + ' ' + kill.method + ' ' + kill.killed;
+          kill.label = new IgeUiLabel()
+            .value(value)
+            .styleClass('killBox')
+            .top(5 + 25 * index)
+            .mount(self.uiScene);
+        } else {
+          ige.client.killList.splice(index, 1)
+        }
+      });
+    }, 30);
 
   },
 
