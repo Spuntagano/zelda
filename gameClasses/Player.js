@@ -36,7 +36,8 @@ var Player = IgeEntityBox2d.extend({
 			thrust: false,
       retroThrust: false,
       shoot: false,
-      slash: false
+      slash: false,
+      bomb: false
 		};
 
     this.rotation = 'Down';
@@ -46,7 +47,7 @@ var Player = IgeEntityBox2d.extend({
 		}
 
 		if (ige.isClient) {
-      this.addComponent(IgeAnimationComponent)
+      this.addComponent(IgeAnimationComponent);
       this._characterTexture = new IgeCellSheet('./assets/textures/link.png', 23, 4);
 
       this._characterTexture.on('loaded', function () {
@@ -126,19 +127,19 @@ var Player = IgeEntityBox2d.extend({
 
 		/* CEXCLUDE */
 		if (ige.isServer) {
-			if (this.controls.left && !this.controls.slash && !this.controls.shoot) {
+			if (this.controls.left && !this.controls.slash && !this.controls.shoot && !this.controls.bomb) {
         this._box2dBody.SetLinearVelocity(new IgePoint3d(-4, 0, 0));
 			}
 
-			if (this.controls.right && !this.controls.slash && !this.controls.shoot) {
+			if (this.controls.right && !this.controls.slash && !this.controls.shoot && !this.controls.bomb) {
         this._box2dBody.SetLinearVelocity(new IgePoint3d(4, 0, 0));
       }
 
-			if (this.controls.thrust && !this.controls.slash && !this.controls.shoot) {
+			if (this.controls.thrust && !this.controls.slash && !this.controls.shoot && !this.controls.bomb) {
         this._box2dBody.SetLinearVelocity(new IgePoint3d(0, -4, 0));
 			}
 
-      if (this.controls.retroThrust && !this.controls.slash && !this.controls.shoot) {
+      if (this.controls.retroThrust && !this.controls.slash && !this.controls.shoot && !this.controls.bomb) {
         this._box2dBody.SetLinearVelocity(new IgePoint3d(0, 4, 0));
       }
 
@@ -209,6 +210,12 @@ var Player = IgeEntityBox2d.extend({
           ige.network.send('playerControlSlash');
         }
       }
+
+      if (ige.input.actionState('bomb')) {
+        if (!this.controls.bomb) {
+          ige.network.send('playerControlBomb');
+        }
+      }
     }
 
 		// Call the IgeEntity (super-class) tick() method
@@ -277,7 +284,7 @@ var Player = IgeEntityBox2d.extend({
               break;
           }
         } else if (this.controls.shoot) {
-          switch(this.rotation) {
+          switch (this.rotation) {
             case 'Left':
               this.animation.select('shootLeft');
               break;
@@ -289,6 +296,21 @@ var Player = IgeEntityBox2d.extend({
               break;
             case 'Right':
               this.animation.select('shootRight');
+              break;
+          }
+        } else if (this.controls.bomb) {
+          switch(this.rotation) {
+            case 'Left':
+              this.animation.select('stopLeft');
+              break;
+            case 'Up':
+              this.animation.select('stopUp');
+              break;
+            case 'Down':
+              this.animation.select('stopDown');
+              break;
+            case 'Right':
+              this.animation.select('stopRight');
               break;
           }
         } else {

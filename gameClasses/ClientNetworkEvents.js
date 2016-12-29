@@ -62,6 +62,14 @@ var ClientNetworkEvents = {
 
   _onPlayerControlShootOff: function (data) {
     ige.client.players[data].controls.shoot = false;
+  },
+
+  _onPlayerControlBomb: function (data) {
+    ige.client.players[data].controls.bomb = true;
+  },
+
+  _onPlayerControlBombOff: function (data) {
+    ige.client.players[data].controls.bomb = false;
   }
 };
 

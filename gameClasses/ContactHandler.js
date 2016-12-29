@@ -21,6 +21,18 @@ var ContactHandler = IgeClass.extend({
           self.playerSlashed(contact.igeEntityA(), contact.igeEntityB(), contact);
         } else if (contact.igeEntityA().classId() === 'Sword' && contact.igeEntityB().classId() === 'Player') {
           self.playerSlashed(contact.igeEntityB(), contact.igeEntityA(), contact);
+        } else if (contact.igeEntityA().classId() === 'Player' && contact.igeEntityB().classId() === 'Explosion') {
+          self.playerExploded(contact.igeEntityA(), contact.igeEntityB(), contact);
+        } else if (contact.igeEntityA().classId() === 'Explosion' && contact.igeEntityB().classId() === 'Player') {
+          self.playerExploded(contact.igeEntityB(), contact.igeEntityA(), contact);
+        } else if (contact.igeEntityA().classId() === 'Player' && contact.igeEntityB().classId() === 'Bomb') {
+          contact.SetEnabled(false);
+        } else if (contact.igeEntityA().classId() === 'Bomb' && contact.igeEntityB().classId() === 'Player') {
+          contact.SetEnabled(false);
+        } else if (contact.igeEntityA().classId() === 'Explosion' && contact.igeEntityB().classId() === 'Bomb') {
+          contact.SetEnabled(false);
+        } else if (contact.igeEntityA().classId() === 'Bomb' && contact.igeEntityB().classId() === 'Explosion') {
+          contact.SetEnabled(false);
         } else if (contact.igeEntityA().classId() === 'Player' && contact.igeEntityB().classId() === 'Player') {
           contact.SetEnabled(false);
         }
@@ -58,6 +70,19 @@ var ContactHandler = IgeClass.extend({
       Object.keys(ige.server.players).map(function (key) {
         if (ige.server.players[key].id() === player.id()) {
           ige.server.playerKilledHandler.playerKilled(sword.slashedBy, 'slashed', player, key);
+        }
+      });
+    }
+  },
+
+  playerExploded: function(player, explosion, contact) {
+
+    contact.SetEnabled(false);
+
+    if (ige.isServer) {
+      Object.keys(ige.server.players).map(function (key) {
+        if (ige.server.players[key].id() === player.id()) {
+          ige.server.playerKilledHandler.playerKilled(explosion.shotBy, 'exploded', player, key);
         }
       });
     }

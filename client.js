@@ -94,6 +94,8 @@ var Client = IgeClass.extend({
             ige.network.define('playerControlSlashOff', self._onPlayerControlSlashOff); // Defined in ./gameClasses/ClientNetworkEvents.js
             ige.network.define('playerControlShoot', self._onPlayerControlShoot); // Defined in ./gameClasses/ClientNetworkEvents.js
             ige.network.define('playerControlShootOff', self._onPlayerControlShootOff); // Defined in ./gameClasses/ClientNetworkEvents.js
+            ige.network.define('playerControlBomb', self._onPlayerControlBomb); // Defined in ./gameClasses/ClientNetworkEvents.js
+            ige.network.define('playerControlBombOff', self._onPlayerControlBombOff); // Defined in ./gameClasses/ClientNetworkEvents.js
 
             // Setup the network stream handler
             ige.network.addComponent(IgeStreamComponent)
@@ -112,6 +114,7 @@ var Client = IgeClass.extend({
             ige.input.mapAction('retroThrust', ige.input.key.down);
             ige.input.mapAction('shoot', ige.input.key.space);
             ige.input.mapAction('slash', ige.input.key.q);
+            ige.input.mapAction('bomb', ige.input.key.e);
 
             var contactHandler = new ContactHandler();
             ige.box2d.contactListener(contactHandler.contactBegin(), contactHandler.contactEnd(), contactHandler.contactPreSolver());

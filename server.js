@@ -42,6 +42,9 @@ var Server = IgeClass.extend({
             ige.network.define('playerControlSlash', self._onPlayerSlash);
             ige.network.define('playerControlSlashOff', self._onPlayerSlashOff);
 
+            ige.network.define('playerControlBomb', self._onPlayerBomb);
+            ige.network.define('playerControlBombOff', self._onPlayerBombOff);
+
 						ige.network.on('connect', self._onPlayerConnect); // Defined in ./gameClasses/ServerNetworkEvents.js
 						ige.network.on('disconnect', self._onPlayerDisconnect); // Defined in ./gameClasses/ServerNetworkEvents.js
 

@@ -189,6 +189,74 @@ var ServerNetworkEvents = {
         }, (4 / 8 * 1000 + 4));
       }
     }
+  },
+
+  _onPlayerBomb: function (data, clientId) {
+    if (ige.server.players[clientId]) {
+      if (!ige.server.players[clientId].controls.bomb) {
+        ige.server.players[clientId]._box2dBody.SetLinearVelocity(new IgePoint3d(0, 0, 0));
+
+        ige.server.players[clientId].controls.bomb = true;
+        ige.network.send('playerControlBomb', ige.server.players[clientId].id());
+        new IgeTimeout(function () {
+          var rotation = ige.server.players[clientId].rotation;
+          var position = ige.server.players[clientId].worldPosition();
+
+          var bulletOffsetX = 0;
+          var bulletOffsetY = 0;
+          var bulletVelocityX = 0;
+          var bulletVelocityY = 0;
+
+          switch (rotation) {
+            case 'Up':
+              bulletVelocityY = -40;
+              bulletOffsetY = -30;
+              break;
+            case 'Left':
+              bulletVelocityX = -40;
+              bulletOffsetX = -30;
+              break;
+            case 'Right':
+              bulletVelocityX = 40;
+              bulletOffsetX = 30;
+              break;
+            case 'Down':
+              bulletVelocityY = 40;
+              bulletOffsetY = 30;
+              break;
+          }
+
+          position.x = position.x + bulletOffsetX;
+          position.y = position.y + bulletOffsetY;
+
+          var bomb = new Bomb({position: position, shotBy: ige.server.players[clientId].id()})
+            .streamMode(1)
+            .mount(ige.server.scene1);
+
+          new IgeTimeout(function() {
+            bomb._box2dBody.SetLinearVelocity(new IgePoint3d(0, 0, 0));
+            
+            new IgeTimeout(function() {
+              var explosion = new Explosion({position: bomb.worldPosition(), shotBy: ige.server.players[clientId].id()})
+                .streamMode(1)
+                .lifeSpan(10*30)
+                .mount(ige.server.scene1);
+              
+              explosion.shotBy = ige.server.players[clientId];
+
+              bomb.destroy();
+            }, 2000);
+          }, 200);
+
+          bomb._box2dBody.SetLinearVelocity(new IgePoint3d(bulletVelocityX, bulletVelocityY, 0));
+
+          bomb.shotBy = ige.server.players[clientId];
+
+          ige.server.players[clientId].controls.bomb = false;
+          ige.network.send('playerControlBombOff', ige.server.players[clientId].id());
+        }, (4 / 8 * 1000 + 4));
+      }
+    }
   }
 };
 
