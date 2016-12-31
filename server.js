@@ -19,34 +19,26 @@ var Server = IgeClass.extend({
 
 		this.players = {};
 		this.implement(ServerNetworkEvents);
+    this.gameEntityCreator = new GameEntityCreator();
 
 		ige.addComponent(IgeNetIoComponent)
 			.network.start(2000, function () {
 				ige.start(function (success) {
 					if (success) {
 						ige.network.define('playerEntity', self._onPlayerEntity);
-            ige.network.define('playerKilled', self._onPlayerKilled); // Defined in ./gameClasses/ClientNetworkEvents.js
-            ige.network.define('playerDestroyed', self._onPlayerDestroyed); // Defined in ./gameClasses/ClientNetworkEvents.js
+            ige.network.define('playerKilled', self._onPlayerKilled); 
+            ige.network.define('playerDestroyed');
 
-						ige.network.define('playerControlLeftDown', self._onPlayerLeftDown);
-						ige.network.define('playerControlRightDown', self._onPlayerRightDown);
-						ige.network.define('playerControlThrustDown', self._onPlayerThrustDown);
-            ige.network.define('playerControlRetroThrustDown', self._onPlayerRetroThrustDown);
-            ige.network.define('playerControlShoot', self._onPlayerShoot);
-            ige.network.define('playerControlShootOff', self._onPlayerShootOff);
+						ige.network.define('playerControl', self._onPlayerMove);
+            ige.network.define('shoot', self._onPlayerShoot);
+            ige.network.define('slash', self._onPlayerSlash);
+            ige.network.define('bomb', self._onPlayerBomb);
 
-						ige.network.define('playerControlLeftUp', self._onPlayerLeftUp);
-						ige.network.define('playerControlRightUp', self._onPlayerRightUp);
-						ige.network.define('playerControlThrustUp', self._onPlayerThrustUp);
-            ige.network.define('playerControlRetroThrustUp', self._onPlayerRetroThrustUp);
-            ige.network.define('playerControlSlash', self._onPlayerSlash);
-            ige.network.define('playerControlSlashOff', self._onPlayerSlashOff);
+            ige.network.define('actionStart');
+            ige.network.define('actionEnd');
 
-            ige.network.define('playerControlBomb', self._onPlayerBomb);
-            ige.network.define('playerControlBombOff', self._onPlayerBombOff);
-
-						ige.network.on('connect', self._onPlayerConnect); // Defined in ./gameClasses/ServerNetworkEvents.js
-						ige.network.on('disconnect', self._onPlayerDisconnect); // Defined in ./gameClasses/ServerNetworkEvents.js
+						ige.network.on('connect', self._onPlayerConnect);
+						ige.network.on('disconnect', self._onPlayerDisconnect); 
 
 						ige.network.addComponent(IgeStreamComponent)
 							.stream.sendInterval(30) // Send a stream update once every 30 milliseconds

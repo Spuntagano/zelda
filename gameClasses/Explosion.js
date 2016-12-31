@@ -1,24 +1,21 @@
-var Explosion = IgeEntityBox2d.extend({
+var Explosion = GameEntity.extend({
   classId: 'Explosion',
 
   init: function (data) {
-    IgeEntityBox2d.prototype.init.call(this);
-
     var self = this;
-
-    this.drawBounds(true);
-    this.depth(11);
     this.data = data;
-    this.translateTo(this.data.position.x, this.data.position.y, this.data.position.z);
 
-    if (ige.isServer) {
-      this.addComponent(IgeVelocityComponent);
-    }
+    this.data.options = {
+      lethal: 'players',
+      clip: 'all',
+      destroyOnKill: false
+    };
+
+    this.killVerb = 'bombed';
 
     if (ige.isClient) {
       this.addComponent(IgeAnimationComponent);
 
-      this.shotBy = ige.client.players[this.data.shotBy];
       this._characterTexture = new IgeCellSheet('./assets/textures/explosion.png', 9, 1);
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
@@ -30,7 +27,7 @@ var Explosion = IgeEntityBox2d.extend({
       }, false, true);
     }
 
-    this.box2dBody({
+    this.data.box2dBody = {
       type: 'dynamic',
       linearDamping: 0.0,
       angularDamping: 0.1,
@@ -45,7 +42,9 @@ var Explosion = IgeEntityBox2d.extend({
           type: 'rectangle'
         }
       }]
-    });
+    };
+
+    GameEntity.prototype.init.call(this, data);
   },
 
   streamCreateData: function () {
@@ -60,11 +59,11 @@ var Explosion = IgeEntityBox2d.extend({
   tick: function (ctx) {
     
     // Call the IgeEntity (super-class) tick() method
-    IgeEntityBox2d.prototype.tick.call(this, ctx);
+    GameEntity.prototype.tick.call(this, ctx);
   },
 
   destroy: function () {
-    IgeEntityBox2d.prototype.destroy.call(this);
+    GameEntity.prototype.destroy.call(this);
   }
 });
 

@@ -48,28 +48,18 @@ var ClientNetworkEvents = {
     }
   },
 
-  _onPlayerControlSlash: function (data) {
-    ige.client.players[data].controls.slash = true;
+  _onPlayerMove: function(data) {
+    if (ige.client.players[data.id]) {
+      ige.client.players[data.id].rotation = data.rotation;
+    }
   },
 
-  _onPlayerControlSlashOff: function (data) {
-    ige.client.players[data].controls.slash = false;
+  _onPlayerActionStart: function (data) {
+    ige.client.players[data.id].action = data.action;
   },
 
-  _onPlayerControlShoot: function (data) {
-    ige.client.players[data].controls.shoot = true;
-  },
-
-  _onPlayerControlShootOff: function (data) {
-    ige.client.players[data].controls.shoot = false;
-  },
-
-  _onPlayerControlBomb: function (data) {
-    ige.client.players[data].controls.bomb = true;
-  },
-
-  _onPlayerControlBombOff: function (data) {
-    ige.client.players[data].controls.bomb = false;
+  _onPlayerActionEnd: function (data) {
+    ige.client.players[data.id].action = '';
   }
 };
 

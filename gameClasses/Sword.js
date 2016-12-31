@@ -1,41 +1,39 @@
-var Sword = IgeEntityBox2d.extend({
+var Sword = GameEntity.extend({
   classId: 'Sword',
 
   init: function (data) {
-    IgeEntityBox2d.prototype.init.call(this);
-
-    this.box2dBody({
-      type: 'dynamic',
-      linearDamping: 0.0,
-      angularDamping: 0.1,
-      allowSleep: false,
-      bullet: true,
-      fixedRotation: false,
-      fixtures: [{
-        density: 1.0,
-        friction: 0,
-        restitution: 0.0001,
-        shape: {
-          type: 'rectangle'
-        }
-      }]
-    });
-
-
     var self = this;
-    
     this.data = data;
-    this.drawBounds(true);
-    this.depth(10);
-    this.translateTo(this.data.playerPosition.x, this.data.playerPosition.y, this.data.playerPosition.z)
 
-    if (ige.isServer) {
-      this.addComponent(IgeVelocityComponent);
-    }
+    this.data.offset = this.data.offset || {
+        up: {
+          x: 0,
+          y: 10
+        },
+        left: {
+          x: -5,
+          y: 5
+        },
+        right: {
+          x: 0,
+          y: 4
+        },
+        down: {
+          x: 0,
+          y: 8
+        }
+      };
+
+    this.data.options = {
+      lethal: 'playersExceptOwner',
+      clip: 'all',
+      destroyOnKill: false
+    };
+
+    this.killVerb = 'slashed';
 
     if (ige.isClient) {
       this.addComponent(IgeAnimationComponent);
-      this.slashedBy = ige.client.players[this.data.slashedBy];
       this._characterTexture = new IgeCellSheet('./assets/textures/sword.png', 12, 4);
 
       this._characterTexture.on('loaded', function () {
@@ -53,8 +51,24 @@ var Sword = IgeEntityBox2d.extend({
       }, false, true);
     }
 
-    this._lastTranslate = this._translate.clone();
-    this.rotation = this.data.playerRotation;
+    this.data.box2dBody = {
+      type: 'dynamic',
+      linearDamping: 0.0,
+      angularDamping: 0.1,
+      allowSleep: false,
+      bullet: true,
+      fixedRotation: false,
+      fixtures: [{
+        density: 1.0,
+        friction: 0,
+        restitution: 0.0001,
+        shape: {
+          type: 'rectangle'
+        }
+      }]
+    };
+
+    GameEntity.prototype.init.call(this, data);
   },
 
   streamCreateData: function () {
@@ -65,23 +79,23 @@ var Sword = IgeEntityBox2d.extend({
   update: function (ctx, tickDelta) {
 
     if (ige.isClient) {
-      switch (this.rotation) {
-        case 'Left':
+      switch (this.data.rotation) {
+        case 'left':
           this.animation.select('swordLeft');
           break;
-        case 'Up':
+        case 'up':
           this.animation.select('swordUp');
           break;
-        case 'Down':
+        case 'down':
           this.animation.select('swordDown');
           break;
-        case 'Right':
+        case 'right':
           this.animation.select('swordRight');
           break;
       }
     }
 
-    IgeEntityBox2d.prototype.update.call(this, ctx, tickDelta);
+    GameEntity.prototype.update.call(this, ctx, tickDelta);
   },
 
   /**
@@ -92,7 +106,7 @@ var Sword = IgeEntityBox2d.extend({
   tick: function (ctx) {
 
     // Call the IgeEntity (super-class) tick() method
-    IgeEntityBox2d.prototype.tick.call(this, ctx);
+    GameEntity.prototype.tick.call(this, ctx);
   }
 });
 

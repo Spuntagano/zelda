@@ -6,16 +6,25 @@ var PlayerKilledHandler = IgeClass.extend({
     var self = this;
   },
   
-  playerKilled: function(killer, method, killed, socketId) {
+  playerKilled: function(killerEntity, killed) {
     ige.network.send('playerKilled', {
-      killer: killer.username,
-      method: method,
+      killer: killerEntity.shotBy.username,
+      method: killerEntity.killVerb,
       killed: killed.username,
       killedId: killed.id()
     });
-    
+
+    if (killerEntity.options.destroyOnKill) {
+      killerEntity.destroy();
+    }
+
     killed.destroy();
-    delete ige.server.players[socketId];
+    Object.keys(ige.server.players).map(function (key) {
+      if (ige.server.players[key].id() === killed.id()) {
+        killed.destroy();
+        delete ige.server.players[key];
+      }
+    });
   }
 });
 

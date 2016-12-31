@@ -1,31 +1,57 @@
-var Bomb = IgeEntityBox2d.extend({
+var Bomb = GameEntity.extend({
   classId: 'Bomb',
 
   init: function (data) {
-    IgeEntityBox2d.prototype.init.call(this);
-
     var self = this;
-
-    this.drawBounds(true);
-    this.depth(11);
     this.data = data;
-    this.translateTo(this.data.position.x, this.data.position.y, this.data.position.z);
 
-    if (ige.isServer) {
-      this.addComponent(IgeVelocityComponent);
-    }
+    this.data.speed = this.data.speed || {
+      up: {
+        x: 0,
+        y: -40
+      },
+      left: {
+        x: -40,
+        y: 0
+      },
+      right: {
+        x: 40,
+        y: 0
+      },
+      down: {
+        x: 0,
+        y: 40
+      }
+    };
 
-    if (ige.isClient) {
-      this.shotBy = ige.client.players[this.data.shotBy];
-      this._characterTexture = new IgeCellSheet('./assets/textures/bomb.png', 4, 1);
-      this._characterTexture.on('loaded', function () {
-        self.texture(self._characterTexture)
-          .width(32)
-          .height(32)
-      }, false, true);
-    }
+    this.data.offset = this.data.offset || {
+      up: {
+        x: 0,
+        y: -30
+      },
+      left: {
+        x: -30,
+        y: 0
+      },
+      right: {
+        x: 30,
+        y: 0
+      },
+      down: {
+        x: 0,
+        y: 30
+      }
+    };
+    
+    this.data.options = {
+      lethal: false,
+      clip: 'players',
+      destroyOnKill: false
+    };
+    
+    this.killVerb = 'bombed';
 
-    this.box2dBody({
+    this.data.box2dBody = {
       type: 'dynamic',
       linearDamping: 0.0,
       angularDamping: 0.1,
@@ -40,7 +66,38 @@ var Bomb = IgeEntityBox2d.extend({
           type: 'rectangle'
         }
       }]
-    });
+    };
+
+    if (ige.isClient) {
+      this._characterTexture = new IgeCellSheet('./assets/textures/bomb.png', 4, 1);
+      this._characterTexture.on('loaded', function () {
+        self.texture(self._characterTexture)
+          .width(32)
+          .height(32)
+      }, false, true);
+    }
+
+    
+    if (ige.isServer) {
+      new IgeTimeout(function () {
+        self._box2dBody.SetLinearVelocity(new IgePoint3d(0, 0, 0));
+
+        new IgeTimeout(function () {
+          var explosion = new Explosion({
+            position: self.worldPosition(),
+            rotation: 'up'
+          }).streamMode(1)
+            .lifeSpan(10 * 30)
+            .mount(ige.server.scene1);
+          
+          explosion.shotBy = self.shotBy;
+
+          self.destroy();
+        }, 2000);
+      }, 200);
+    }
+
+    GameEntity.prototype.init.call(this, data);
   },
 
   streamCreateData: function () {
@@ -55,11 +112,11 @@ var Bomb = IgeEntityBox2d.extend({
   tick: function (ctx) {
     
     // Call the IgeEntity (super-class) tick() method
-    IgeEntityBox2d.prototype.tick.call(this, ctx);
+    GameEntity.prototype.tick.call(this, ctx);
   },
 
   destroy: function () {
-    IgeEntityBox2d.prototype.destroy.call(this);
+    GameEntity.prototype.destroy.call(this);
   }
 });
 

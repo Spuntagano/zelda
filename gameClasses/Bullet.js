@@ -1,19 +1,62 @@
-var Player = IgeEntityBox2d.extend({
+var Bullet = GameEntity.extend({
   classId: 'Bullet',
 
   init: function (data) {
-    IgeEntityBox2d.prototype.init.call(this);
-
     var self = this;
-
-    this.drawBounds(true);
-    this.depth(11);
     this.data = data;
-    this.translateTo(this.data.position.x, this.data.position.y, this.data.position.z);
 
-    if (ige.isServer) {
-      this.addComponent(IgeVelocityComponent);
-    }
+    this.data.speed = this.data.speed || {
+      up: {
+        x: 0,
+        y: -40
+      },
+      left: {
+        x: -40,
+        y: 0
+      },
+      right: {
+        x: 40,
+        y: 0
+      },
+      down: {
+        x: 0,
+        y: 40
+      }
+    };
+
+    this.data.offset = this.data.offset || {
+      up: {
+        x: 0,
+        y: -30
+      },
+      left: {
+        x: -30,
+        y: 0
+      },
+      right: {
+        x: 30,
+        y: 0
+      },
+      down: {
+        x: 0,
+        y: 30
+      }
+    };
+    
+    this.data.entityRotation = this.data.entityRotation || {
+      up: 0,
+      left: 270,
+      right: 90,
+      down: 180
+    };
+
+    this.data.options = {
+      lethal: 'playersExceptOwner',
+      clip: 'players',
+      destroyOnKill: true
+    };
+
+    this.killVerb = 'shot';
 
     if (ige.isClient) {
       this.shotBy = ige.client.players[this.data.shotBy];
@@ -25,7 +68,7 @@ var Player = IgeEntityBox2d.extend({
       }, false, true);
     }
 
-    this.box2dBody({
+    this.data.box2dBody = {
       type: 'dynamic',
       linearDamping: 0.0,
       angularDamping: 0.1,
@@ -40,22 +83,9 @@ var Player = IgeEntityBox2d.extend({
           type: 'rectangle'
         }
       }]
-    });
+    };
 
-    switch(this.data.rotation) {
-      case 'Up':
-        this.rotateTo(0, 0, Math.radians(0));
-        break;
-      case 'Left':
-        this.rotateTo(0, 0, Math.radians(270));
-        break;
-      case 'Right':
-        this.rotateTo(0, 0, Math.radians(90));
-        break;
-      case 'Down':
-        this.rotateTo(0, 0, Math.radians(180));
-        break;
-    }
+    GameEntity.prototype.init.call(this, data);
   },
 
   streamCreateData: function () {
@@ -70,8 +100,8 @@ var Player = IgeEntityBox2d.extend({
   tick: function (ctx) {
     
     // Call the IgeEntity (super-class) tick() method
-    IgeEntityBox2d.prototype.tick.call(this, ctx);
+    GameEntity.prototype.tick.call(this, ctx);
   }
 });
 
-if (typeof(module) !== 'undefined' && typeof(module.exports) !== 'undefined') { module.exports = Player; }
+if (typeof(module) !== 'undefined' && typeof(module.exports) !== 'undefined') { module.exports = Bullet; }

@@ -13,80 +13,77 @@ var ContactHandler = IgeClass.extend({
     };
     self.contactPreSolver = function () {
       return function(contact) {
-        if (contact.igeEntityA().classId() === 'Player' && contact.igeEntityB().classId() === 'Bullet') {
-          self.playerShot(contact.igeEntityA(), contact.igeEntityB(), contact);
-        } else if (contact.igeEntityA().classId() === 'Bullet' && contact.igeEntityB().classId() === 'Player') {
-          self.playerShot(contact.igeEntityB(), contact.igeEntityA(), contact);
-        } else if (contact.igeEntityA().classId() === 'Player' && contact.igeEntityB().classId() === 'Sword') {
-          self.playerSlashed(contact.igeEntityA(), contact.igeEntityB(), contact);
-        } else if (contact.igeEntityA().classId() === 'Sword' && contact.igeEntityB().classId() === 'Player') {
-          self.playerSlashed(contact.igeEntityB(), contact.igeEntityA(), contact);
-        } else if (contact.igeEntityA().classId() === 'Player' && contact.igeEntityB().classId() === 'Explosion') {
-          self.playerExploded(contact.igeEntityA(), contact.igeEntityB(), contact);
-        } else if (contact.igeEntityA().classId() === 'Explosion' && contact.igeEntityB().classId() === 'Player') {
-          self.playerExploded(contact.igeEntityB(), contact.igeEntityA(), contact);
-        } else if (contact.igeEntityA().classId() === 'Player' && contact.igeEntityB().classId() === 'Bomb') {
-          contact.SetEnabled(false);
-        } else if (contact.igeEntityA().classId() === 'Bomb' && contact.igeEntityB().classId() === 'Player') {
-          contact.SetEnabled(false);
-        } else if (contact.igeEntityA().classId() === 'Explosion' && contact.igeEntityB().classId() === 'Bomb') {
-          contact.SetEnabled(false);
-        } else if (contact.igeEntityA().classId() === 'Bomb' && contact.igeEntityB().classId() === 'Explosion') {
-          contact.SetEnabled(false);
-        } else if (contact.igeEntityA().classId() === 'Player' && contact.igeEntityB().classId() === 'Player') {
-          contact.SetEnabled(false);
+        var isPlayer = self.isPlayer(contact);
+
+        if (isPlayer) {
+          if (isPlayer.entity.classId() === 'Player') {
+            contact.SetEnabled(false);
+          }
+
+          if (isPlayer.entity.options && isPlayer.entity.shotBy) {
+            switch (isPlayer.entity.options.clip) {
+              case 'all':
+                contact.SetEnabled(false);
+                break;
+              case 'players':
+                contact.SetEnabled(false);
+                break;
+              case 'owner':
+                if (isPlayer.entity.shotBy.id() === isPlayer.player.id()) {
+                  contact.SetEnabled(false);
+                }
+                break;
+              default:
+                break;
+            }
+
+            switch (isPlayer.entity.options.lethal) {
+              case 'players':
+                if (ige.server) {
+                  ige.server.playerKilledHandler.playerKilled(isPlayer.entity, isPlayer.player);
+                }
+                break;
+              case 'playersExceptOwner':
+                if (isPlayer.entity.shotBy.id() !== isPlayer.player.id()) {
+                  if (ige.server) {
+                    ige.server.playerKilledHandler.playerKilled(isPlayer.entity, isPlayer.player);
+                  }
+                }
+                break;
+              default:
+                break;
+            }
+          }
+        } else {
+          if (contact.igeEntityA().options) {
+            if (contact.igeEntityA().options.clip === 'all') {
+              contact.SetEnabled(false);
+            }
+          } else if (contact.igeEntityB().options) {
+            if (contact.igeEntityB().options.clip === 'all') {
+              contact.SetEnabled(false);
+            }
+          }
         }
+      };
+    }
+  },
+
+  isPlayer: function (contact) {
+    if (contact.igeEntityA().classId() === 'Player') {
+      return {
+        player: contact.igeEntityA(),
+        entity: contact.igeEntityB()
       }
     }
-  },
-
-  playerShot: function(player, bullet, contact) {
-
-    //can't KYS
-    if (player.id() === bullet.shotBy.id()) {
-      contact.SetEnabled(false);
-      return;
+    if (contact.igeEntityB().classId() === 'Player') {
+      return {
+        player: contact.igeEntityB(),
+        entity: contact.igeEntityA()
+      }
     }
-
-    if (ige.isServer) {
-      Object.keys(ige.server.players).map(function (key) {
-        if (ige.server.players[key].id() === player.id()) {
-          ige.server.playerKilledHandler.playerKilled(bullet.shotBy, 'shot', player, key);
-        }
-      });
-      bullet.destroy();
-    }
-  },
-
-  playerSlashed: function(player, sword, contact) {
-
-    //can't KYS
-    if (player.id() === sword.slashedBy.id()) {
-      contact.SetEnabled(false);
-      return;
-    }
-
-    if (ige.isServer) {
-      Object.keys(ige.server.players).map(function (key) {
-        if (ige.server.players[key].id() === player.id()) {
-          ige.server.playerKilledHandler.playerKilled(sword.slashedBy, 'slashed', player, key);
-        }
-      });
-    }
-  },
-
-  playerExploded: function(player, explosion, contact) {
-
-    contact.SetEnabled(false);
-
-    if (ige.isServer) {
-      Object.keys(ige.server.players).map(function (key) {
-        if (ige.server.players[key].id() === player.id()) {
-          ige.server.playerKilledHandler.playerKilled(explosion.shotBy, 'exploded', player, key);
-        }
-      });
-    }
-  },
+    return false;
+  }
 
 });
 
