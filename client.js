@@ -20,15 +20,14 @@ var Client = IgeClass.extend({
     this.username = '';
     // Load the Tiled map data and handle the return data
     ige.addComponent(IgeTiledComponent)
-      .tiled.loadJson(tiledExample1, function (layerArray, layersById) {
+      .tiled.loadJson(map, function (layerArray, layersById) {
       for (var i = 0; i < layerArray.length; i++) {
         layerArray[i]
           .autoSection(20)
           .depth(0)
           .mount(self.ui.mainScene);
       }
-
-      ige.box2d.staticsFromMap(layersById.DirtLayer);
+      ige.box2d.staticsFromMap(layersById.wallLayer);
     });
 
     // Ask the engine to start

@@ -11,10 +11,9 @@ var Server = IgeClass.extend({
 
     // Load the Tiled map data and handle the return data
     ige.addComponent(IgeTiledComponent)
-      .tiled.loadJson(tiledExample1, function (layerArray, layersById) {
+      .tiled.loadJson(map, function (layerArray, layersById) {
 
-      // Create static box2d objects from the dirt layer
-      ige.box2d.staticsFromMap(layersById.DirtLayer);
+      ige.box2d.staticsFromMap(layersById.wallLayer);
     });
 
 		this.players = {};
@@ -64,6 +63,42 @@ var Server = IgeClass.extend({
 							.scene(self.mainScene)
 							.drawBounds(true)
 							.mount(ige);
+
+            new Tree({position: {x: 10*32, y: 15*32, z: 0}})
+              .streamMode(1)
+              .mount(ige.server.scene1);
+
+            new Tree({position: {x: 22.5*32, y: 15*32, z: 0}})
+              .streamMode(1)
+              .mount(ige.server.scene1);
+
+            new Tree({position: {x: 10*32, y: 25*32, z: 0}})
+              .streamMode(1)
+              .mount(ige.server.scene1);
+
+            new Tree({position: {x: 22.5*32, y: 25*32, z: 0}})
+              .streamMode(1)
+              .mount(ige.server.scene1);
+
+            new Tree({position: {x: 10*32, y: 35*32, z: 0}})
+              .streamMode(1)
+              .mount(ige.server.scene1);
+
+            new Tree({position: {x: 22.5*32, y: 35*32, z: 0}})
+              .streamMode(1)
+              .mount(ige.server.scene1);
+
+            new Tree({position: {x: 10*32, y: 45*32, z: 0}})
+              .streamMode(1)
+              .mount(ige.server.scene1);
+
+            new Tree({position: {x: 22.5*32, y: 45*32, z: 0}})
+              .streamMode(1)
+              .mount(ige.server.scene1);
+
+            new House({position: {x: 16.5*32, y: 7*32, z: 0}})
+              .streamMode(1)
+              .mount(ige.server.scene1);
 					}
 				});
 			});

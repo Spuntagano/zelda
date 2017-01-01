@@ -19,8 +19,8 @@ var Explosion = GameEntity.extend({
       this._characterTexture = new IgeCellSheet('./assets/textures/explosion.png', 9, 1);
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
-          .width(96)
-          .height(96);
+          .width(48)
+          .height(48);
 
         self.animation.define('explode', [1, 2, 3, 4, 5, 6, 7, 8], 12, -1)
           .animation.select('explode');

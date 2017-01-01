@@ -10,7 +10,9 @@ var config = {
     {name: 'Bullet', path: './gameClasses/Bullet'},
     {name: 'Bomb', path: './gameClasses/Bomb'},
     {name: 'Explosion', path: './gameClasses/Explosion'},
-    {name: 'tiledExample1', path: './maps/example'}
+    {name: 'Tree', path: './gameClasses/Tree'},
+    {name: 'House', path: './gameClasses/House'},
+    {name: 'map', path: './maps/map'}
 	]
 };
 

@@ -72,8 +72,8 @@ var Bomb = GameEntity.extend({
       this._characterTexture = new IgeCellSheet('./assets/textures/bomb.png', 4, 1);
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
-          .width(32)
-          .height(32)
+          .width(16)
+          .height(16)
       }, false, true);
     }
 

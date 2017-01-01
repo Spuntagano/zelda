@@ -27,7 +27,7 @@ var Player = IgeEntityBox2d.extend({
     });
     
     this.username = '';
-    this.translateTo(1000, 1000, 0);
+    this.translateTo(17*32, 13*32, 0);
 
 		// Rotate to point upwards
 		this.controls = {
@@ -38,7 +38,7 @@ var Player = IgeEntityBox2d.extend({
 		};
 
     this.action = '';
-    this.rotation = 'Down';
+    this.rotation = 'down';
 
 		if (ige.isClient) {
       this.addComponent(IgeAnimationComponent);
@@ -46,8 +46,8 @@ var Player = IgeEntityBox2d.extend({
 
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
-          .width(64)
-          .height(64);
+          .width(32)
+          .height(32);
           //.dimensionsFromCell();
 
         self.animation.define('walkDown', [85, 86, 87, 88, 89, 90, 91, 92], 12, -1)
@@ -71,7 +71,7 @@ var Player = IgeEntityBox2d.extend({
       }, false, true);
 		}
 
-    this._lastTranslate = this._translate.clone();
+    this.scaleTo(2, 2, 0);
 
 		// Define the data sections that will be included in the stream
 		this.streamSections(['transform', 'score']);
@@ -230,16 +230,7 @@ var Player = IgeEntityBox2d.extend({
     if (this.action) {
       this._box2dBody.SetLinearVelocity(new IgePoint3d(0, 0, 0));
     }
-
-    var oldX = this._lastTranslate.x,
-        oldY = this._lastTranslate.y * 2,
-        currX = this.translate().x(),
-        currY = this.translate().y() * 2,
-        distX = currX - oldX,
-        distY = currY - oldY;
     
-    this._lastTranslate = this._translate.clone();
-
     if (ige.isClient) {
     switch(this.rotation) {
       case 'left':
@@ -254,10 +245,10 @@ var Player = IgeEntityBox2d.extend({
             this.animation.select('stopLeft');
             break;
           default:
-            if (distX === 0 && distY === 0) {
-              this.animation.select('stopLeft');
-            } else {
+            if (this.controls.left) {
               this.animation.select('walkLeft');
+            } else {
+              this.animation.select('stopLeft');
             }
             break;
         }
@@ -274,10 +265,10 @@ var Player = IgeEntityBox2d.extend({
             this.animation.select('stopUp');
             break;
           default:
-            if (distX === 0 && distY === 0) {
-              this.animation.select('stopUp');
-            } else {
+            if (this.controls.up) {
               this.animation.select('walkUp');
+            } else {
+              this.animation.select('stopUp');
             }
             break;
         }
@@ -294,10 +285,10 @@ var Player = IgeEntityBox2d.extend({
             this.animation.select('stopDown');
             break;
           default:
-            if (distX === 0 && distY === 0) {
-              this.animation.select('stopDown');
-            } else {
+            if (this.controls.down) {
               this.animation.select('walkDown');
+            } else {
+              this.animation.select('stopDown');
             }
             break;
         }
@@ -314,10 +305,10 @@ var Player = IgeEntityBox2d.extend({
             this.animation.select('stopRight');
             break;
           default:
-            if (distX === 0 && distY === 0) {
-              this.animation.select('stopRight');
-            } else {
+            if (this.controls.right) {
               this.animation.select('walkRight');
+            } else {
+              this.animation.select('stopRight');
             }
             break;
         }

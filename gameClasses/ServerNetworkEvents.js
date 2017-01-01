@@ -39,7 +39,7 @@ var ServerNetworkEvents = {
 	},
 
   _onPlayerMove: function(data, clientId) {
-    if (ige.server.players[clientId] && !ige.server.players[clientId].action) {
+    if (ige.server.players[clientId]) {
       ige.server.players[clientId].controls = data;
     }
   },

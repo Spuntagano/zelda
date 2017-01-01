@@ -63,8 +63,8 @@ var Bullet = GameEntity.extend({
       this._characterTexture = new IgeCellSheet('./assets/textures/arrow.png', 1, 1);
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
-          .width(10)
-          .height(30)
+          .width(5)
+          .height(15)
       }, false, true);
     }
 

@@ -6,9 +6,9 @@ var GameEntity = IgeEntityBox2d.extend({
 
     var self = this;
 
-    this.drawBounds(true);
     this.depth(11);
     this.data = data;
+    this.scaleTo(2, 2, 0);
 
     this.data.speed = this.data.speed || {
         up: {

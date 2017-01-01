@@ -38,8 +38,8 @@ var Sword = GameEntity.extend({
 
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
-          .width(144)
-          .height(144);
+          .width(72)
+          .height(72);
           //.dimensionsFromCell();
 
         self.animation.define('swordDown', [37, 38, 39, 40, 41, 42, 46, 47, 48, 48], 20, 0)
