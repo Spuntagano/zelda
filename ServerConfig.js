@@ -3,6 +3,7 @@ var config = {
 		{name: 'ServerNetworkEvents', path: './gameClasses/ServerNetworkEvents'},
     {name: 'ContactHandler', path: './gameClasses/ContactHandler'},
     {name: 'GameEntityCreator', path: './gameClasses/GameEntityCreator'},
+    {name: 'StaticEntityCreator', path: './gameClasses/StaticEntityCreator'},
     {name: 'PlayerKilledHandler', path: './gameClasses/PlayerKilledHandler'},
     {name: 'GameEntity', path: './gameClasses/GameEntity'},
 		{name: 'Player', path: './gameClasses/Player'},

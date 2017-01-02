@@ -6,6 +6,7 @@ var House = IgeEntityBox2d.extend({
     
     var self = this;
     this.data = data;
+    this.bounds2d(128, 188);
 
     this.box2dBody({
       type: 'static',
@@ -30,12 +31,10 @@ var House = IgeEntityBox2d.extend({
       this._characterTexture = new IgeCellSheet('./assets/textures/house.png', 1, 1);
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
-          .width(64)
-          .height(94)
+          .width(128)
+          .height(188)
       }, false, true);
     }
-    
-    this.scaleTo(2, 2 ,0);
   },
 
   streamCreateData: function () {

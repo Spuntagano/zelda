@@ -54,7 +54,7 @@ var Bomb = GameEntity.extend({
     this.data.box2dBody = {
       type: 'dynamic',
       linearDamping: 0.0,
-      angularDamping: 0.1,
+      angularDamping: 0.000000001,
       allowSleep: false,
       bullet: true,
       fixedRotation: true,

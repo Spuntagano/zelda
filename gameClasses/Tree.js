@@ -3,9 +3,10 @@ var Tree = IgeEntityBox2d.extend({
 
   init: function (data) {
     IgeEntityBox2d.prototype.init.call(this);
-    
+
     var self = this;
     this.data = data;
+    this.bounds2d(128, 160);
 
     this.box2dBody({
       type: 'static',
@@ -30,12 +31,10 @@ var Tree = IgeEntityBox2d.extend({
       this._characterTexture = new IgeCellSheet('./assets/textures/tree.png', 1, 1);
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
-          .width(64)
-          .height(80)
+          .width(128)
+          .height(160)
       }, false, true);
     }
-
-    this.scaleTo(2, 2 ,0);
   },
 
   streamCreateData: function () {
