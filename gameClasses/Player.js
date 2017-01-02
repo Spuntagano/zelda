@@ -39,6 +39,8 @@ var Player = IgeEntityBox2d.extend({
 
     this.action = '';
     this.rotation = 'down';
+    this.moving = false;
+    this.lastMoving = false;
 
 		if (ige.isClient) {
       this.addComponent(IgeAnimationComponent);
@@ -150,10 +152,18 @@ var Player = IgeEntityBox2d.extend({
 
       if (!this.controls.down && !this.controls.up && !this.controls.right && !this.controls.left) {
         this._box2dBody.SetLinearVelocity(new IgePoint3d(0, 0, 0));
+        this.moving = false;
+      } else {
+        this.moving = true;
+      }
+
+      if (this.moving !== this.lastMoving) {
+        this.lastMoving = this.moving;
+        changed = true;
       }
 
       if (changed) {
-        ige.network.send('playerControl', {id: this.id(), rotation: this.rotation});
+        ige.network.send('playerControl', {id: this.id(), rotation: this.rotation, moving: this.moving});
       }
 		}
 
@@ -232,88 +242,97 @@ var Player = IgeEntityBox2d.extend({
     }
     
     if (ige.isClient) {
-    switch(this.rotation) {
-      case 'left':
-        switch (this.action) {
-          case 'slash':
-            this.animation.select('slashLeft');
-            break;
-          case 'shoot':
-            this.animation.select('shootLeft');
-            break;
-          case 'bomb':
-            this.animation.select('stopLeft');
-            break;
-          default:
-            if (this.controls.left) {
-              this.animation.select('walkLeft');
-            } else {
-              this.animation.select('stopLeft');
-            }
-            break;
+
+      if (ige.client.id === this.id()) {
+        if (!this.controls.down && !this.controls.up && !this.controls.right && !this.controls.left) {
+          this.moving = false;
+        } else {
+          this.moving = true;
         }
-        break;
-      case 'up':
-        switch (this.action) {
-          case 'slash':
-            this.animation.select('slashIp');
-            break;
-          case 'shoot':
-            this.animation.select('shootUp');
-            break;
-          case 'bomb':
-            this.animation.select('stopUp');
-            break;
-          default:
-            if (this.controls.up) {
-              this.animation.select('walkUp');
-            } else {
-              this.animation.select('stopUp');
-            }
-            break;
-        }
-        break;
-      case 'down':
-        switch (this.action) {
-          case 'slash':
-            this.animation.select('slashDown');
-            break;
-          case 'shoot':
-            this.animation.select('shootDown');
-            break;
-          case 'bomb':
-            this.animation.select('stopDown');
-            break;
-          default:
-            if (this.controls.down) {
-              this.animation.select('walkDown');
-            } else {
-              this.animation.select('stopDown');
-            }
-            break;
-        }
-        break;
-      case 'right':
-        switch (this.action) {
-          case 'slash':
-            this.animation.select('slashRight');
-            break;
-          case 'shoot':
-            this.animation.select('shootRight');
-            break;
-          case 'bomb':
-            this.animation.select('stopRight');
-            break;
-          default:
-            if (this.controls.right) {
-              this.animation.select('walkRight');
-            } else {
-              this.animation.select('stopRight');
-            }
-            break;
-        }
-        break;
       }
+
+      switch(this.rotation) {
+        case 'left':
+          switch (this.action) {
+            case 'slash':
+              this.animation.select('slashLeft');
+              break;
+            case 'shoot':
+              this.animation.select('shootLeft');
+              break;
+            case 'bomb':
+              this.animation.select('stopLeft');
+              break;
+            default:
+              if (this.moving) {
+                this.animation.select('walkLeft');
+              } else {
+                this.animation.select('stopLeft');
+              }
+              break;
+          }
+          break;
+        case 'up':
+          switch (this.action) {
+            case 'slash':
+              this.animation.select('slashIp');
+              break;
+            case 'shoot':
+              this.animation.select('shootUp');
+              break;
+            case 'bomb':
+              this.animation.select('stopUp');
+              break;
+            default:
+              if (this.moving) {
+                this.animation.select('walkUp');
+              } else {
+                this.animation.select('stopUp');
+              }
+              break;
+          }
+          break;
+        case 'down':
+          switch (this.action) {
+            case 'slash':
+              this.animation.select('slashDown');
+              break;
+            case 'shoot':
+              this.animation.select('shootDown');
+              break;
+            case 'bomb':
+              this.animation.select('stopDown');
+              break;
+            default:
+              if (this.moving) {
+                this.animation.select('walkDown');
+              } else {
+                this.animation.select('stopDown');
+              }
+              break;
+          }
+          break;
+        case 'right':
+          switch (this.action) {
+            case 'slash':
+              this.animation.select('slashRight');
+              break;
+            case 'shoot':
+              this.animation.select('shootRight');
+              break;
+            case 'bomb':
+              this.animation.select('stopRight');
+              break;
+            default:
+              if (this.moving) {
+                this.animation.select('walkRight');
+              } else {
+                this.animation.select('stopRight');
+              }
+              break;
+          }
+          break;
+        }
     }
 
     IgeEntityBox2d.prototype.update.call(this, ctx, tickDelta);

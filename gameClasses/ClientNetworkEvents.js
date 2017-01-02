@@ -51,6 +51,7 @@ var ClientNetworkEvents = {
   _onPlayerMove: function(data) {
     if (ige.client.players[data.id]) {
       ige.client.players[data.id].rotation = data.rotation;
+      ige.client.players[data.id].moving = data.moving;
     }
   },
 
