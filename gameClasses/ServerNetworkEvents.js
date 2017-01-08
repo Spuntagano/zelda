@@ -40,8 +40,11 @@ var ServerNetworkEvents = {
 
   _onPlayerMove: function(data, clientId) {
     if (ige.server.players[clientId]) {
-      ige.server.players[clientId].lastMoving = ige.server.players[clientId].moving;
-      ige.server.players[clientId].controls = data;
+      ige.server.players[clientId].moving = data.moving;
+
+      if (!ige.server.players[clientId].action) {
+        ige.server.players[clientId].rotation = data.rotation;
+      }
     }
   },
 
