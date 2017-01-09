@@ -15,6 +15,7 @@ var ServerNetworkEvents = {
 	_onPlayerDisconnect: function (clientId) {
 		if (ige.server.players[clientId]) {
 			ige.server.players[clientId].destroy();
+      ige.network.send('disconnect', ige.server.players[clientId].id());
 			delete ige.server.players[clientId];
 		}
 	},

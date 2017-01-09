@@ -44,6 +44,7 @@ var Client = IgeClass.extend({
             ige.network.define('playerControl', self._onPlayerMove);
             ige.network.define('actionStart', self._onPlayerActionStart);
             ige.network.define('actionEnd', self._onPlayerActionEnd);
+            ige.network.define('disconnect', self._onPlayerDisconnect);
 
             // Setup the network stream handler
             ige.network.addComponent(IgeStreamComponent)

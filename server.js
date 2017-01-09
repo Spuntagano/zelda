@@ -35,8 +35,9 @@ var Server = IgeClass.extend({
 
             ige.network.define('actionStart');
             ige.network.define('actionEnd');
+            ige.network.define('disconnect');
 
-						ige.network.on('connect', self._onPlayerConnect);
+            ige.network.on('connect', self._onPlayerConnect);
 						ige.network.on('disconnect', self._onPlayerDisconnect); 
 
 						ige.network.addComponent(IgeStreamComponent)

@@ -25,6 +25,15 @@ var UserInterface = IgeClass.extend({
       'color': '#000000'
     });
 
+    ige.ui.style('#minimap', {
+      bottom: 25,
+      right: 25,
+      height: 150,
+      width: 150,
+      'backgroundColor': '#000',
+      opacity: 0.7
+    });
+
     ige.ui.style('#submitBtn', {
       'right': '10%',
       'height': 30,
@@ -72,7 +81,9 @@ var UserInterface = IgeClass.extend({
       .value('Submit')
       .mount(self.login);
 
-
+    self.minimap = new IgeUiElement()
+      .id('minimap')
+      .mount(self.uiScene);
 
     ige.ui.style('.killBox', {
       'left': 10,
@@ -81,10 +92,17 @@ var UserInterface = IgeClass.extend({
       'color': '#000000'
     });
 
-    new IgeInterval(function(){
+    ige.ui.style('.minimapDot', {
+      'width': 5,
+      'height': 5,
+      'backgroundColor': '#f00'
+    });
+
+    var minimapEls = [];
+    new IgeInterval(function() {
       ige.client.killList.map(function(kill, index){
         if (kill.label) {
-          kill.label.unMount();
+          kill.label.destroy();
         }
 
         if (new Date() - 5*1000 < kill.timestamp) {
@@ -97,6 +115,30 @@ var UserInterface = IgeClass.extend({
         } else {
           ige.client.killList.splice(index, 1)
         }
+      });
+
+      minimapEls.map(function(el) {
+        el.destroy();
+      });
+
+      minimapEls = [];
+      var minimapDots = [];
+      Object.keys(ige.client.players).map(function(key) {
+        var x = ige.client.players[key].worldPosition().x / (50 * 32) * 100;
+        var y = ige.client.players[key].worldPosition().y / (50 * 32) * 100;
+
+        minimapDots.push({
+          x: x + '%',
+          y: y + '%'
+        });
+      });
+
+      minimapDots.map(function(position) {
+        minimapEls.push(new IgeUiElement()
+          .mount(self.minimap)
+          .styleClass('minimapDot')
+          .left(position.x)
+          .top(position.y));
       });
     }, 30);
 

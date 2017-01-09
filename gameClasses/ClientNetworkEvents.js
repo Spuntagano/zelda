@@ -35,6 +35,10 @@ var ClientNetworkEvents = {
 		}
 	},
 
+  _onPlayerDisconnect: function(data) {
+    delete ige.client.players[data];
+  },
+
   _onPlayerKilled: function (data) {
     ige.client.killList.push({
       killer: data.killer,
@@ -42,10 +46,11 @@ var ClientNetworkEvents = {
       killed: data.killed,
       timestamp: new Date()
     });
-    
+
     if (ige.client.id === data.killedId) {
       ige.client.ui.displayLogin();
     }
+    delete ige.client.players[data.killedId]
   },
 
   _onPlayerMove: function(data) {
