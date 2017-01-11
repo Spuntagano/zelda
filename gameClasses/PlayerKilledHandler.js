@@ -21,7 +21,6 @@ var PlayerKilledHandler = IgeClass.extend({
     killed.destroy();
     Object.keys(ige.server.players).map(function (key) {
       if (ige.server.players[key].id() === killed.id()) {
-        killed.destroy();
         delete ige.server.players[key];
       }
     });

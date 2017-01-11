@@ -1,10 +1,11 @@
 var Player = IgeEntityBox2d.extend({
 	classId: 'Player',
 
-	init: function () {
+	init: function (data) {
 		IgeEntityBox2d.prototype.init.call(this);
 
 		var self = this;
+    this.data = data;
     this.depth(1);
 
     this.box2dBody({
@@ -25,7 +26,7 @@ var Player = IgeEntityBox2d.extend({
     });
     
     this.username = '';
-    this.translateTo(17*32, 13*32, 0);
+    this.translateTo(this.data.position.x, this.data.position.y, this.data.position.z);
 
 		this.moving = false;
     this.lastMoving = false;
@@ -106,6 +107,10 @@ var Player = IgeEntityBox2d.extend({
     this.scaleTo(2, 2, 0);
 	},
 
+  streamCreateData: function () {
+    return this.data;
+  },
+
 	tick: function (ctx) {
 		if (ige.isServer) {
 
@@ -116,10 +121,6 @@ var Player = IgeEntityBox2d.extend({
       }
 
       if (this.moving !== this.lastMoving || this.rotation !== this.lastRotation) {
-        changed = true;
-      }
-
-      if (changed) {
         ige.network.send('playerControl', {id: this.id(), rotation: this.rotation, moving: this.moving});
       }
 
@@ -130,7 +131,6 @@ var Player = IgeEntityBox2d.extend({
 		if (ige.isClient && ige.client.id === this.id()) {
       
       var moving = true;
-      var changed = false;
       var rotation = this.rotation;
 			if (ige.input.actionState('left')) {
         rotation = 'left';
@@ -145,7 +145,7 @@ var Player = IgeEntityBox2d.extend({
       }
 
       if (moving !== this.moving || rotation !== this.rotation) {
-        changed = true;
+        ige.network.send('playerControl', {rotation: rotation, moving: moving});
       }
 
       if (ige.input.actionState('shoot')) {
@@ -158,10 +158,6 @@ var Player = IgeEntityBox2d.extend({
 
       if (ige.input.actionState('bomb')) {
         ige.network.send('bomb');
-      }
-
-      if (changed) {
-        ige.network.send('playerControl', {rotation: rotation, moving: moving});
       }
     }
 

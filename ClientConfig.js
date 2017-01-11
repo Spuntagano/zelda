@@ -13,6 +13,8 @@ var igeClientConfig = {
     './gameClasses/Sword.js',
     './gameClasses/UserInterface.js',
     './gameClasses/ContactHandler.js',
+    './gameClasses/Minimap.js',
+    './gameClasses/KillList.js',
     './maps/map.js',
 		/* Standard game scripts */
 		'./client.js',

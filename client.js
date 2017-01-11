@@ -72,6 +72,9 @@ var Client = IgeClass.extend({
             self.username = self.ui.usernameTextBox.value();
             self.ui.hideLogin();
 
+            new Minimap();
+            new KillList();
+
             //ige.network.debugMax(10);
             //ige.network.debug(true);
           });

@@ -22,7 +22,7 @@ var ServerNetworkEvents = {
 
 	_onPlayerEntity: function (data, clientId) {
 		if (!ige.server.players[clientId]) {
-			ige.server.players[clientId] = new Player(clientId)
+			ige.server.players[clientId] = new Player({position: {x: (Math.random()*48 + 1)*32, y: (Math.random()*48 + 1)*32, z: 0}})
 				.streamMode(1)
 				.mount(ige.server.scene1);
 

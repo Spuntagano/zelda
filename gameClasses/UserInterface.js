@@ -42,6 +42,19 @@ var UserInterface = IgeClass.extend({
       'backgroundColor': '#ccc'
     });
 
+    ige.ui.style('.killBox', {
+      'left': 10,
+      'width': 1000,
+      'font': 'bold 16px Open Sans',
+      'color': '#000000'
+    });
+
+    ige.ui.style('.minimapDot', {
+      'width': 5,
+      'height': 5,
+      'backgroundColor': '#f00'
+    });
+
     self.mainScene = new IgeScene2d()
       .id('mainScene');
 
@@ -84,64 +97,6 @@ var UserInterface = IgeClass.extend({
     self.minimap = new IgeUiElement()
       .id('minimap')
       .mount(self.uiScene);
-
-    ige.ui.style('.killBox', {
-      'left': 10,
-      'width': 1000,
-      'font': 'bold 16px Open Sans',
-      'color': '#000000'
-    });
-
-    ige.ui.style('.minimapDot', {
-      'width': 5,
-      'height': 5,
-      'backgroundColor': '#f00'
-    });
-
-    var minimapEls = [];
-    new IgeInterval(function() {
-      ige.client.killList.map(function(kill, index){
-        if (kill.label) {
-          kill.label.destroy();
-        }
-
-        if (new Date() - 5*1000 < kill.timestamp) {
-          value = kill.killer + ' ' + kill.method + ' ' + kill.killed;
-          kill.label = new IgeUiLabel()
-            .value(value)
-            .styleClass('killBox')
-            .top(5 + 25 * index)
-            .mount(self.uiScene);
-        } else {
-          ige.client.killList.splice(index, 1)
-        }
-      });
-
-      minimapEls.map(function(el) {
-        el.destroy();
-      });
-
-      minimapEls = [];
-      var minimapDots = [];
-      Object.keys(ige.client.players).map(function(key) {
-        var x = ige.client.players[key].worldPosition().x / (50 * 32) * 100;
-        var y = ige.client.players[key].worldPosition().y / (50 * 32) * 100;
-
-        minimapDots.push({
-          x: x + '%',
-          y: y + '%'
-        });
-      });
-
-      minimapDots.map(function(position) {
-        minimapEls.push(new IgeUiElement()
-          .mount(self.minimap)
-          .styleClass('minimapDot')
-          .left(position.x)
-          .top(position.y));
-      });
-    }, 30);
-
   },
 
   hideLogin: function() {
