@@ -34,7 +34,7 @@ var config = {
     }
   },
   startingPosition: {
-    x: undefined
+    x: undefined,
     y: undefined
   }
 };
