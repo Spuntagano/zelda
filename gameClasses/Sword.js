@@ -6,27 +6,71 @@ var Sword = GameEntity.extend({
     this.data = data;
 
     this.data.offset = this.data.offset || {
-        up: {
-          x: 0,
-          y: 10
-        },
-        left: {
-          x: -5,
-          y: 5
-        },
-        right: {
-          x: 0,
-          y: 4
-        },
-        down: {
-          x: 0,
-          y: 8
-        }
-      };
+      up: {
+        x: 0,
+        y: -30
+      },
+      left: {
+        x: -30,
+        y: 0
+      },
+      right: {
+        x: 30,
+        y: 0
+      },
+      down: {
+        x: 0,
+        y: 30
+      }
+    };
 
-    this.data.options = {
-      lethal: 'playersExceptOwner',
-      clip: 'all',
+    this.data.bounds2d = this.data.bounds2d || {
+      up: {
+        x:72,
+        y:-36
+      },
+      left: {
+        x:-36,
+        y:72
+      },
+      right: {
+        x:36,
+        y:72
+      },
+      down: {
+        x:72,
+        y:36
+      }
+    };
+
+    this.data.anchor = this.data.anchor || {
+      up: {
+        x: 0,
+        y: 30
+      },
+      left: {
+        x: 23,
+        y: -7
+      },
+      right: {
+        x: -30,
+        y: 0
+      },
+      down: {
+        x: -5,
+        y: -25
+      }
+    };
+
+    this.data.contactOptions = {
+      owner: {
+        clip: true,
+        lethal: false
+      },
+      players: {
+        clip: true,
+        lethal: true
+      },
       destroyOnKill: false
     };
 
@@ -38,9 +82,8 @@ var Sword = GameEntity.extend({
 
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
-          .width(72)
-          .height(72);
-          //.dimensionsFromCell();
+          .width(144)
+          .height(144);
 
         self.animation.define('swordDown', [37, 38, 39, 40, 41, 42, 46, 47, 48, 48], 20, 0)
           .animation.define('swordLeft', [25, 26, 27, 28, 29, 30, 34, 35, 36, 36], 20, 0)

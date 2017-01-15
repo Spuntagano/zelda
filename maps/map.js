@@ -1,17 +1,14 @@
-var MAP_HEIGHT = 50;
-var MAP_WIDTH = 50;
-
 var grassLayer = [];
-for (var i = 0; i < MAP_WIDTH; i++) {
-  for (var j = 0; j < MAP_HEIGHT; j++) {
+for (var i = 0; i < config.tiles.count.x; i++) {
+  for (var j = 0; j < config.tiles.count.y; j++) {
     grassLayer.push(1);
   }
 }
 
 var wallLayer = [];
-for (var i = 0; i < MAP_WIDTH; i++) {
-  for (var j = 0; j < MAP_HEIGHT; j++) {
-    if (i === 0 || i === MAP_WIDTH - 1 || j === 0 || j === MAP_HEIGHT -1) {
+for (var i = 0; i < config.tiles.count.x; i++) {
+  for (var j = 0; j < config.tiles.count.y; j++) {
+    if (i === 0 || i === config.tiles.count.x - 1 || j === 0 || j === config.tiles.count.y -1) {
       wallLayer.push(2);
     } else {
       wallLayer.push(0);
@@ -20,8 +17,8 @@ for (var i = 0; i < MAP_WIDTH; i++) {
 }
 
 var roadLayer = [];
-for (var i = 0; i < MAP_WIDTH; i++) {
-  for (var j = 0; j < MAP_HEIGHT; j++) {
+for (var i = 0; i < config.tiles.count.x; i++) {
+  for (var j = 0; j < config.tiles.count.y; j++) {
     if ((j === 15 || j === 16 || j === 17) && i > 7) {
       roadLayer.push(3);
     } else {
@@ -31,38 +28,38 @@ for (var i = 0; i < MAP_WIDTH; i++) {
 }
 
 var map = {
-  "height": MAP_HEIGHT,
+  "height": config.tiles.count.y,
   "layers":[
     {
       "data": wallLayer,
-      "height": MAP_HEIGHT,
+      "height": config.tiles.count.y,
       "name":"wallLayer",
       "opacity":1,
       "type":"tilelayer",
       "visible":true,
-      "width": MAP_WIDTH,
+      "width": config.tiles.count.x,
       "x":0,
       "y":0
     },
     {
       "data": roadLayer,
-      "height": MAP_HEIGHT,
+      "height": config.tiles.count.y,
       "name":"roadLayer",
       "opacity":1,
       "type":"tilelayer",
       "visible":true,
-      "width": MAP_WIDTH,
+      "width": config.tiles.count.x,
       "x":0,
       "y":0
     },
     {
       "data": grassLayer,
-      "height": MAP_HEIGHT,
+      "height": config.tiles.count.y,
       "name":"grassLayer",
       "opacity":1,
       "type":"tilelayer",
       "visible":true,
-      "width": MAP_WIDTH,
+      "width": config.tiles.count.x,
       "x":0,
       "y":0
     }],
@@ -70,45 +67,45 @@ var map = {
     {
       "firstgid":1,
       "image":"assets\/textures\/grass.png",
-      "imageheight":32,
-      "imagewidth":32,
+      "imageheight":config.tiles.size.y,
+      "imagewidth":config.tiles.size.x,
       "margin":0,
       "name":"grassSheet",
       "properties": {},
       "spacing":0,
-      "tileheight":32,
-      "tilewidth":32
+      "tileheight":config.tiles.size.y,
+      "tilewidth":config.tiles.size.x
     },
     {
       "firstgid":2,
       "image":"assets\/textures\/block.png",
-      "imageheight":32,
-      "imagewidth":32,
+      "imageheight":config.tiles.size.y,
+      "imagewidth":config.tiles.size.x,
       "margin":0,
       "name":"treeSheet",
       "properties": {},
       "spacing":0,
-      "tileheight":32,
-      "tilewidth":32
+      "tileheight":config.tiles.size.y,
+      "tilewidth":config.tiles.size.x
     },
     {
       "firstgid":3,
       "image":"assets\/textures\/road.png",
-      "imageheight":32,
-      "imagewidth":32,
+      "imageheight":config.tiles.size.y,
+      "imagewidth":config.tiles.size.x,
       "margin":0,
       "name":"roadSheet",
       "properties": {},
       "spacing":0,
-      "tileheight":32,
-      "tilewidth":32
+      "tileheight":config.tiles.size.y,
+      "tilewidth":config.tiles.size.x
     }],
   // "orientation":"isometric",
   "properties": {},
-  "tileheight":32,
-  "tilewidth":32,
+  "tileheight":config.tiles.size.y,
+  "tilewidth":config.tiles.size.x,
   "version":1,
-  "width": MAP_WIDTH
+  "width": config.tiles.count.x
 };
 
 if (typeof(module) !== 'undefined' && typeof(module.exports) !== 'undefined') { module.exports = map; }

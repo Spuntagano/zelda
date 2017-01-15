@@ -48,14 +48,19 @@ var ClientNetworkEvents = {
     });
 
     if (ige.client.id === data.killedId) {
-      ige.client.ui.displayLogin();
+      new IgeTimeout(function() {
+        document.getElementById('login').style.display = 'block';
+      }, 1000);
     }
+
+    ige.client.players[data.killedId].action = 'death';
     delete ige.client.players[data.killedId]
   },
 
   _onPlayerMove: function(data) {
     if (ige.client.players[data.id]) {
       ige.client.players[data.id].rotation = data.rotation;
+      ige.client.players[data.id].movement = data.movement;
       ige.client.players[data.id].moving = data.moving;
     }
   },

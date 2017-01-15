@@ -30,54 +30,55 @@ var Client = IgeClass.extend({
       ige.box2d.staticsFromMap(layersById.wallLayer);
     });
 
+    this.ui.vp1.camera.panTo(new IgePoint3d(config.initialCameraPosition.x, config.initialCameraPosition.y, 0), 0);
+    if (config.showHitbox) {
+      ige.box2d.enableDebug(self.ui.scene1);
+    }
+
     // Ask the engine to start
     ige.start(function (success) {
       // Check if the engine started successfully
       if (success) {
 
-        self.ui.submitBtn.on('mouseUp', function(e) {
-          ige.network.stop(function(){});
-          ige.network.start(config.url + ':' + config.port, function () {
-            // Setup the network command listeners
-            ige.network.define('playerEntity', self._onPlayerEntity);
-            ige.network.define('playerKilled', self._onPlayerKilled);
-            ige.network.define('playerControl', self._onPlayerMove);
-            ige.network.define('actionStart', self._onPlayerActionStart);
-            ige.network.define('actionEnd', self._onPlayerActionEnd);
-            ige.network.define('disconnect', self._onPlayerDisconnect);
+        ige.network.start(config.url + ':' + config.port, function () {
+          // Setup the network command listeners
+          ige.network.define('playerEntity', self._onPlayerEntity);
+          ige.network.define('playerKilled', self._onPlayerKilled);
+          ige.network.define('playerControl', self._onPlayerMove);
+          ige.network.define('actionStart', self._onPlayerActionStart);
+          ige.network.define('actionEnd', self._onPlayerActionEnd);
+          ige.network.define('disconnect', self._onPlayerDisconnect);
 
-            // Setup the network stream handler
-            ige.network.addComponent(IgeStreamComponent)
-              .stream.renderLatency(80) // Render the simulation 160 milliseconds in the past
-            // Create a listener that will fire whenever an entity
-            // is created because of the incoming stream data
-              .stream.on('entityCreated', function (entity) {
-              if (entity._classId === 'Player') {
-                self.players[entity.id()] = entity;
-              }
-            });
-
-            ige.input.mapAction('left', ige.input.key.left);
-            ige.input.mapAction('right', ige.input.key.right);
-            ige.input.mapAction('up', ige.input.key.up);
-            ige.input.mapAction('down', ige.input.key.down);
-            ige.input.mapAction('shoot', ige.input.key.space);
-            ige.input.mapAction('slash', ige.input.key.q);
-            ige.input.mapAction('bomb', ige.input.key.e);
-
-            var contactHandler = new ContactHandler();
-            ige.box2d.contactListener(contactHandler.contactBegin(), contactHandler.contactEnd(), contactHandler.contactPreSolver());
-
-            ige.network.send('playerEntity', self.ui.usernameTextBox.value());
-            self.username = self.ui.usernameTextBox.value();
-            self.ui.hideLogin();
-
-            new Minimap();
-            new KillList();
-
-            //ige.network.debugMax(10);
-            //ige.network.debug(true);
+          // Setup the network stream handler
+          ige.network.addComponent(IgeStreamComponent)
+            .stream.renderLatency(config.renderLatency) // Render the simulation 160 milliseconds in the past
+          // Create a listener that will fire whenever an entity
+          // is created because of the incoming stream data
+            .stream.on('entityCreated', function (entity) {
+            if (entity._classId === 'Player') {
+              self.players[entity.id()] = entity;
+            }
           });
+
+          ige.input.mapAction('left', ige.input.key.left);
+          ige.input.mapAction('right', ige.input.key.right);
+          ige.input.mapAction('up', ige.input.key.up);
+          ige.input.mapAction('down', ige.input.key.down);
+          ige.input.mapAction('shoot', ige.input.key.space);
+          ige.input.mapAction('slash', ige.input.key.q);
+          ige.input.mapAction('bomb', ige.input.key.e);
+
+          var contactHandler = new ContactHandler();
+          ige.box2d.contactListener(contactHandler.contactBegin(), contactHandler.contactEnd(), contactHandler.contactPreSolver());
+
+          document.getElementById('login').onsubmit = function(e) {
+            e.preventDefault();
+            e.target.style.display = 'none';
+            ige.network.send('playerEntity', e.target.username.value);
+          };
+
+          new Minimap();
+          new KillList();
         });
       }
 		});

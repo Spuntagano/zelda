@@ -1,0 +1,3 @@
+kill icon
+spawn force update
+game entity cooldown

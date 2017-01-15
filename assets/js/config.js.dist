@@ -1,0 +1,42 @@
+var config = {
+  url: 'http://192.168.99.100',
+  port: 2000,
+  env: 'production',
+  renderLatency: 100,
+  showHitbox: false,
+  initialCameraPosition: {
+    x: 1000,
+    y: 1000
+  },
+  bomb: {
+    timeBeforeStop: 200,
+    timeBeforeExplose: 1000,
+    animationDuration: 4/8*1000,
+    lifeDuration: 99999
+  },
+  arrow: {
+    animationDuration: 4/8*1000,
+    lifeDuration: 1000
+  },
+  sword: {
+    animationDuration: 8/20*1000,
+    lifeDuration: 8/20*1000
+  },
+  tickRate: 30,
+  tiles: {
+    count: {
+      x: 50,
+      y: 50
+    },
+    size: {
+      x: 32,
+      y: 32
+    }
+  },
+  startingPosition: {
+    x: undefined
+    y: undefined
+  }
+};
+
+if (typeof(module) !== 'undefined' && typeof(module.exports) !== 'undefined') { module.exports = config; }

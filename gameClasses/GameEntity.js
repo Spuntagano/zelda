@@ -5,10 +5,9 @@ var GameEntity = IgeEntityBox2d.extend({
     IgeEntityBox2d.prototype.init.call(this);
 
     var self = this;
-
     this.depth(11);
     this.data = data;
-    this.scaleTo(2, 2, 0);
+    this.category('GameEntity');
 
     this.data.speed = this.data.speed || {
         up: {
@@ -48,6 +47,25 @@ var GameEntity = IgeEntityBox2d.extend({
         }
       };
 
+    this.data.anchor = this.data.anchor || {
+        up: {
+          x: 0,
+          y: 0
+        },
+        left: {
+          x: 0,
+          y: 0
+        },
+        right: {
+          x: 0,
+          y: 0
+        },
+        down: {
+          x: 0,
+          y: 0
+        }
+      };
+
     this.data.entityRotation = this.data.entityRotation || {
         up: 0,
         left: 0,
@@ -55,11 +73,22 @@ var GameEntity = IgeEntityBox2d.extend({
         down: 0
       };
 
-    this.options = this.data.options || {
-      lethal: 'players',
-      clip: 'players',
-      destroyOnKill: false
+    this.contactOptions = this.data.contactOptions || {
+        owner: {
+          clip: false,
+          lethal: false
+        },
+        players: {
+          clip: false,
+          lethal: false
+        },
+        destroyOnKill: false
     };
+
+    if (this.data.bounds2d) {
+      this.bounds2d(this.data.bounds2d[this.data.rotation].x, this.data.bounds2d[this.data.rotation].y);
+    }
+    this.anchor(this.data.anchor[this.data.rotation].x, this.data.anchor[this.data.rotation].y);
 
     this.box2dBody(this.data.box2dBody);
     this.translateTo(this.data.position.x + this.data.offset[this.data.rotation].x, this.data.position.y + this.data.offset[this.data.rotation].y, this.data.position.z);

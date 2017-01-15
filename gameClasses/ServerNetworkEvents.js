@@ -22,7 +22,12 @@ var ServerNetworkEvents = {
 
 	_onPlayerEntity: function (data, clientId) {
 		if (!ige.server.players[clientId]) {
-			ige.server.players[clientId] = new Player({position: {x: (Math.random()*48 + 1)*32, y: (Math.random()*48 + 1)*32, z: 0}})
+			ige.server.players[clientId] = new Player({
+        position: {
+          x: config.startingPosition.x || (Math.random()*(config.tiles.count.x - 2) + 1)*config.tiles.size.x,
+          y: config.startingPosition.y || (Math.random()*(config.tiles.count.y - 2) + 1)*config.tiles.size.y,
+          z: 0
+        }})
 				.streamMode(1)
 				.mount(ige.server.scene1);
 
@@ -35,7 +40,7 @@ var ServerNetworkEvents = {
         Object.keys(ige.server.players).map(function(key) {
           ige.server.players[key].streamForceUpdate();
         });
-      }, 30);
+      }, config.tickRate);
 		}
 	},
 
@@ -45,20 +50,21 @@ var ServerNetworkEvents = {
 
       if (!ige.server.players[clientId].action) {
         ige.server.players[clientId].rotation = data.rotation;
+        ige.server.players[clientId].movement = data.movement;
       }
     }
   },
 
   _onPlayerSlash: function (data, clientId) {
-    ige.server.gameEntityCreator.createGameEntity(data, clientId, Sword, 10/20*1000, 10/20*1000, 'slash', true);
+    ige.server.gameEntityCreator.createGameEntity(data, clientId, Sword, config.sword.animationDuration, config.sword.lifeDuration, 'slash', true);
   },
 
   _onPlayerShoot: function (data, clientId) {
-    ige.server.gameEntityCreator.createGameEntity(data, clientId, Bullet, 4/8*1000, 1000, 'shoot', false);
+    ige.server.gameEntityCreator.createGameEntity(data, clientId, Bullet, config.arrow.animationDuration, config.arrow.lifeDuration, 'shoot', false);
   },
 
   _onPlayerBomb: function (data, clientId) {
-    ige.server.gameEntityCreator.createGameEntity(data, clientId, Bomb, 4/8*1000, 99999, 'bomb', false);
+    ige.server.gameEntityCreator.createGameEntity(data, clientId, Bomb, config.bomb.animationDuration, config.bomb.lifeDuration, 'bomb', false);
   }
 };
 

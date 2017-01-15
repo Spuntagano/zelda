@@ -1,11 +1,14 @@
 var config = {
 	include: [
+    {name: 'config', path: './assets/js/config'},
 		{name: 'ServerNetworkEvents', path: './gameClasses/ServerNetworkEvents'},
     {name: 'ContactHandler', path: './gameClasses/ContactHandler'},
     {name: 'GameEntityCreator', path: './gameClasses/GameEntityCreator'},
-    {name: 'StaticEntityCreator', path: './gameClasses/StaticEntityCreator'},
+    {name: 'StaticEntities', path: './gameClasses/StaticEntities'},
     {name: 'PlayerKilledHandler', path: './gameClasses/PlayerKilledHandler'},
     {name: 'GameEntity', path: './gameClasses/GameEntity'},
+    {name: 'StaticEntity', path: './gameClasses/StaticEntity'},
+    {name: 'StaticEntities', path: './gameClasses/StaticEntities'},
 		{name: 'Player', path: './gameClasses/Player'},
     {name: 'Sword', path: './gameClasses/Sword'},
     {name: 'Bullet', path: './gameClasses/Bullet'},

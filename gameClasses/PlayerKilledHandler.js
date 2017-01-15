@@ -7,23 +7,32 @@ var PlayerKilledHandler = IgeClass.extend({
   },
   
   playerKilled: function(killerEntity, killed) {
-    ige.network.send('playerKilled', {
-      killer: killerEntity.shotBy.username,
-      method: killerEntity.killVerb,
-      killed: killed.username,
-      killedId: killed.id()
-    });
+    if (killed.alive) {
+      new IgeTimeout(function () {
+        ige.network.send('playerKilled', {
+          killer: killerEntity.shotBy.username,
+          method: killerEntity.killVerb,
+          killed: killed.username,
+          killedId: killed.id()
+        });
 
-    if (killerEntity.options.destroyOnKill) {
-      killerEntity.destroy();
+        if (killerEntity.contactOptions.destroyOnKill) {
+          killerEntity.destroy();
+        }
+
+        new IgeTimeout(function () {
+          killed.destroy();
+        }, 2000);
+
+        Object.keys(ige.server.players).map(function (key) {
+          if (ige.server.players[key].id() === killed.id()) {
+            delete ige.server.players[key];
+          }
+        });
+      }, config.tickRate*2);
     }
-
-    killed.destroy();
-    Object.keys(ige.server.players).map(function (key) {
-      if (ige.server.players[key].id() === killed.id()) {
-        delete ige.server.players[key];
-      }
-    });
+    
+    killed.alive = false;
   }
 });
 

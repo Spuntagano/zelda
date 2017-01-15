@@ -1,5 +1,5 @@
-var StaticEntityCreator = IgeClass.extend({
-  classId: 'StaticEntityCreator',
+var StaticEntities = IgeClass.extend({
+  classId: 'StaticEntities',
 
   init: function() {
     var self = this;
@@ -43,4 +43,4 @@ var StaticEntityCreator = IgeClass.extend({
 
 });
 
-if (typeof(module) !== 'undefined' && typeof(module.exports) !== 'undefined') { module.exports = StaticEntityCreator; }
+if (typeof(module) !== 'undefined' && typeof(module.exports) !== 'undefined') { module.exports = StaticEntities; }

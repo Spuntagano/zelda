@@ -12,21 +12,13 @@
 
 </head>
 <body>
-    <div class="igeLoading loadingFloat">
-        <div class="loadingLogo"></div>
-        <div class="loadingCircle"></div>
-        <div class="loadingCircleInner"></div>
-        <div class="loadingText" id="loadingText">
-            Loading
-        </div>
-        <div id="loadingProgress">
-            <div id="loadingProgressBar"></div>
-        </div>
-    </div>
-    <div class="igeLoading loadingLink">
-        Powered By Isogenic Game Engine
-        <a href="http://www.isogenicengine.com" target="_blank">http://www.isogenicengine.com</a>
-    </div>
+    <form id="login">
+       <input id="username" type="text" placeholder="Username" />
+       <button class="send">Play</button>
+    </form>
+
+    <div class="igeLoading loadingOverlay"></div>
+
     <script type="text/javascript" src="/assets/js/config.js"></script>
     <script type="text/javascript" src="/assets/js/loader.js"></script>
 </body>

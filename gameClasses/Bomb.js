@@ -42,10 +42,35 @@ var Bomb = GameEntity.extend({
         y: 30
       }
     };
-    
-    this.data.options = {
-      lethal: false,
-      clip: 'players',
+
+    this.data.bounds2d = this.data.bounds2d || {
+        up: {
+          x: 24,
+          y: 24
+        },
+        left: {
+          x: 24,
+          y: 24
+        },
+        right: {
+          x: 24,
+          y: 24
+        },
+        down: {
+          x: 24,
+          y: 24
+        }
+      };
+
+    this.data.contactOptions = {
+      owner: {
+        clip: true,
+        lethal: false
+      },
+      players: {
+        clip: true,
+        lethal: false
+      },
       destroyOnKill: false
     };
     
@@ -67,13 +92,13 @@ var Bomb = GameEntity.extend({
         }
       }]
     };
-
+    
     if (ige.isClient) {
       this._characterTexture = new IgeCellSheet('./assets/textures/bomb.png', 4, 1);
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
-          .width(16)
-          .height(16)
+          .width(32)
+          .height(32)
       }, false, true);
     }
 
@@ -85,7 +110,7 @@ var Bomb = GameEntity.extend({
         new IgeTimeout(function () {
           var explosion = new Explosion({
             position: self.worldPosition(),
-            rotation: 'up'
+            shotBy: self.data.shotBy
           }).streamMode(1)
             .lifeSpan(10 * 30)
             .mount(ige.server.scene1);
@@ -93,8 +118,8 @@ var Bomb = GameEntity.extend({
           explosion.shotBy = self.shotBy;
 
           self.destroy();
-        }, 2000);
-      }, 200);
+        }, config.bomb.timeBeforeExplose);
+      }, config.bomb.timeBeforeStop);
     }
 
     GameEntity.prototype.init.call(this, data);

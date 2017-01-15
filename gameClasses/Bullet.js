@@ -42,6 +42,25 @@ var Bullet = GameEntity.extend({
         y: 30
       }
     };
+
+    this.data.bounds2d = this.data.bounds2d || {
+        up: {
+          x: 5,
+          y: 15
+        },
+        left: {
+          x: 5,
+          y: 15
+        },
+        right: {
+          x: 5,
+          y: 15
+        },
+        down: {
+          x: 5,
+          y: 15
+        }
+      };
     
     this.data.entityRotation = this.data.entityRotation || {
       up: 0,
@@ -49,10 +68,16 @@ var Bullet = GameEntity.extend({
       right: 90,
       down: 180
     };
-
-    this.data.options = {
-      lethal: 'playersExceptOwner',
-      clip: 'players',
+    
+    this.data.contactOptions = {
+      owner: {
+        clip: true,
+        lethal: false
+      },
+      players: {
+        clip: true,
+        lethal: true
+      },
       destroyOnKill: true
     };
 
@@ -63,8 +88,8 @@ var Bullet = GameEntity.extend({
       this._characterTexture = new IgeCellSheet('./assets/textures/arrow.png', 1, 1);
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
-          .width(5)
-          .height(15)
+          .width(10)
+          .height(30)
       }, false, true);
     }
 
@@ -74,7 +99,7 @@ var Bullet = GameEntity.extend({
       angularDamping: 0.1,
       allowSleep: false,
       bullet: true,
-      fixedRotation: false,
+      fixedRotation: true,
       fixtures: [{
         density: 1.0,
         friction: 0,

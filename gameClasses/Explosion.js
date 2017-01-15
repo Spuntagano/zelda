@@ -5,12 +5,19 @@ var Explosion = GameEntity.extend({
     var self = this;
     this.data = data;
 
-    this.data.options = {
-      lethal: 'players',
-      clip: 'all',
+    this.data.contactOptions = {
+      owner: {
+        clip: true,
+        lethal: true
+      },
+      players: {
+        clip: true,
+        lethal: true
+      },
       destroyOnKill: false
     };
 
+    this.data.rotation = 'down';
     this.killVerb = 'bombed';
 
     if (ige.isClient) {
@@ -19,8 +26,8 @@ var Explosion = GameEntity.extend({
       this._characterTexture = new IgeCellSheet('./assets/textures/explosion.png', 9, 1);
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
-          .width(48)
-          .height(48);
+          .width(96)
+          .height(96);
 
         self.animation.define('explode', [1, 2, 3, 4, 5, 6, 7, 8], 12, -1)
           .animation.select('explode');

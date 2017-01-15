@@ -7,6 +7,29 @@ var Player = IgeEntityBox2d.extend({
 		var self = this;
     this.data = data;
     this.depth(1);
+    this.category('Player');
+
+    this.data.anchor = this.data.anchor || {
+        up: {
+          x: 5,
+          y: -9
+        },
+        left: {
+          x: 0,
+          y: -5
+        },
+        right: {
+          x: 6,
+          y: -9
+        },
+        down: {
+          x: 1,
+          y: -9
+        }
+      };
+
+    this.bounds2d(32, 48);
+    this.anchor(this.data.anchor.down.x, this.data.anchor.down.y);
 
     this.box2dBody({
       type: 'dynamic',
@@ -24,7 +47,7 @@ var Player = IgeEntityBox2d.extend({
         }
       }]
     });
-    
+
     this.username = '';
     this.translateTo(this.data.position.x, this.data.position.y, this.data.position.z);
 
@@ -32,12 +55,20 @@ var Player = IgeEntityBox2d.extend({
     this.lastMoving = false;
     this.action = '';
     this.rotation = 'down';
+    this.lastRotation = 'down';
+    this.movement = 'down';
+    this.lastMovement = 'down';
+    this.alive = true;
 
     this.speed = {
       left: new IgePoint3d(-4, 0, 0),
       right: new IgePoint3d(4, 0, 0),
       up: new IgePoint3d(0, -4, 0),
-      down: new IgePoint3d(0, 4, 0)
+      down: new IgePoint3d(0, 4, 0),
+      leftUp: new IgePoint3d(-4, -4, 0),
+      upRight: new IgePoint3d(4, -4, 0),
+      rightDown: new IgePoint3d(4, 4, 0),
+      downLeft: new IgePoint3d(-4, 4, 0)
     };
 
     this.anim = {
@@ -54,10 +85,10 @@ var Player = IgeEntityBox2d.extend({
         down: 'shootDown'
       },
       bomb: {
-        left: 'stopLeft',
-        right: 'stopRight',
-        up: 'stopUp',
-        down: 'stopDown'
+        left: 'bombLeft',
+        right: 'bombRight',
+        up: 'bombUp',
+        down: 'bombDown'
       },
       stop: {
         left: 'stopLeft',
@@ -70,17 +101,23 @@ var Player = IgeEntityBox2d.extend({
         right: 'walkRight',
         up: 'walkUp',
         down: 'walkDown'
+      },
+      death: {
+        left: 'deathLeft',
+        right: 'deathRight',
+        up: 'deathUp',
+        down: 'deathDown'
       }
     };
 
 		if (ige.isClient) {
       this.addComponent(IgeAnimationComponent);
-      this._characterTexture = new IgeCellSheet('./assets/textures/link.png', 23, 4);
+      this._characterTexture = new IgeCellSheet('./assets/textures/link.png', 23, 8);
 
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
-          .width(32)
-          .height(32);
+          .width(64)
+          .height(64);
           //.dimensionsFromCell();
 
         self.animation.define(self.anim.walk.down, [85, 86, 87, 88, 89, 90, 91, 92], 12, -1)
@@ -99,12 +136,18 @@ var Player = IgeEntityBox2d.extend({
           .animation.define(self.anim.shoot.left, [59, 60, 61, 62], 8, 0)
           .animation.define(self.anim.shoot.right, [13, 14, 15, 16], 8, 0)
           .animation.define(self.anim.shoot.up, [36, 37, 38, 39], 8, 0)
+          .animation.define(self.anim.bomb.down, [162], 12, 0)
+          .animation.define(self.anim.bomb.left, [139], 12, 0)
+          .animation.define(self.anim.bomb.right, [93], 12, 0)
+          .animation.define(self.anim.bomb.up, [116], 12, 0)
+          .animation.define(self.anim.death.down, [184], 12, 0)
+          .animation.define(self.anim.death.left, [184], 12, 0)
+          .animation.define(self.anim.death.right, [184], 12, 0)
+          .animation.define(self.anim.death.up, [184], 12, 0)
           .cell(1);
 
       }, false, true);
 		}
-
-    this.scaleTo(2, 2, 0);
 	},
 
   streamCreateData: function () {
@@ -115,37 +158,79 @@ var Player = IgeEntityBox2d.extend({
 		if (ige.isServer) {
 
       if (this.moving && !this.action) {
-        this._box2dBody.SetLinearVelocity(this.speed[this.rotation]);
+        this._box2dBody.SetLinearVelocity(this.speed[this.movement]);
       } else {
         this._box2dBody.SetLinearVelocity(new IgePoint3d(0, 0, 0));
       }
 
-      if (this.moving !== this.lastMoving || this.rotation !== this.lastRotation) {
-        ige.network.send('playerControl', {id: this.id(), rotation: this.rotation, moving: this.moving});
+      if (this.moving !== this.lastMoving || this.rotation !== this.lastRotation || this.movement !== this.lastMovement) {
+        ige.network.send('playerControl', {id: this.id(), rotation: this.rotation, moving: this.moving, movement: this.movement});
       }
 
       this.lastMoving = this.moving;
       this.lastRotation = this.rotation;
+      this.lastMovement = this.movement;
 		}
 
 		if (ige.isClient && ige.client.id === this.id()) {
       
       var moving = true;
       var rotation = this.rotation;
+      var movement = this.movement;
 			if (ige.input.actionState('left')) {
         rotation = 'left';
+        movement = 'left';
+
+        if (ige.input.actionState('up')) {
+          movement = 'leftUp';
+        }
+
+        if (ige.input.actionState('down')) {
+          movement = 'downLeft';
+        }
+
 			} else if (ige.input.actionState('right'))  {
         rotation = 'right';
+        movement = 'right';
+
+        if (ige.input.actionState('up')) {
+          movement = 'upRight';
+        }
+
+        if (ige.input.actionState('down')) {
+          movement = 'rightDown';
+        }
+
 			} else if (ige.input.actionState('up')) {
         rotation = 'up';
+        movement = 'up';
+
+        if (ige.input.actionState('right')) {
+          movement = 'upRight';
+        }
+
+        if (ige.input.actionState('left')) {
+          movement = 'leftUp';
+        }
+
       } else if (ige.input.actionState('down')) {
         rotation = 'down';
+        movement = 'down';
+
+        if (ige.input.actionState('left')) {
+          movement = 'downLeft';
+        }
+
+        if (ige.input.actionState('right')) {
+          movement = 'rightDown';
+        }
+
       } else {
         moving = false;
       }
 
-      if (moving !== this.moving || rotation !== this.rotation) {
-        ige.network.send('playerControl', {rotation: rotation, moving: moving});
+      if (moving !== this.moving || rotation !== this.rotation || movement !== this.movement) {
+        ige.network.send('playerControl', {rotation: rotation, moving: moving, movement: movement});
       }
 
       if (ige.input.actionState('shoot')) {
@@ -173,6 +258,8 @@ var Player = IgeEntityBox2d.extend({
       } else {
         this.animation.select(this.anim.stop[this.rotation]);
       }
+
+      this.anchor(this.data.anchor[this.rotation].x, this.data.anchor[this.rotation].y);
     }
 
     IgeEntityBox2d.prototype.update.call(this, ctx, tickDelta);
@@ -182,7 +269,7 @@ var Player = IgeEntityBox2d.extend({
     if (this._characterTexture) {
       this._characterTexture.destroy();
     }
-    
+
     IgeEntityBox2d.prototype.destroy.call(this);
   }
   

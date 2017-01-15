@@ -65,7 +65,7 @@ var Server = IgeClass.extend({
 							.drawBounds(true)
 							.mount(ige);
 
-            new StaticEntityCreator();
+            new StaticEntities();
 					}
 				});
 			});

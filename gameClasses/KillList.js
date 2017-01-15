@@ -2,13 +2,23 @@ var KillList = IgeClass.extend({
   classId: 'KillList',
 
   init: function () {
+    var killMessageDisplayLength = 5*1000;
+    
+    
+    ige.ui.style('.killBox', {
+      'left': 10,
+      'width': 1000,
+      'font': 'bold 16px Open Sans',
+      'color': '#000000'
+    });
+    
     new IgeInterval(function() {
       ige.client.killList.map(function(kill, index){
         if (kill.label) {
           kill.label.destroy();
         }
 
-        if (new Date() - 5*1000 < kill.timestamp) {
+        if (new Date() - killMessageDisplayLength < kill.timestamp) {
           value = kill.killer + ' ' + kill.method + ' ' + kill.killed;
           kill.label = new IgeUiLabel()
             .value(value)
@@ -19,7 +29,7 @@ var KillList = IgeClass.extend({
           ige.client.killList.splice(index, 1)
         }
       });
-    }, 30);
+    }, config.tickRate);
 
   }
 });
