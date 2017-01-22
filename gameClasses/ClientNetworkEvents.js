@@ -42,7 +42,7 @@ var ClientNetworkEvents = {
   _onPlayerKilled: function (data) {
     ige.client.killList.push({
       killer: data.killer,
-      method: data.method,
+      icon: data.icon,
       killed: data.killed,
       timestamp: new Date()
     });
@@ -71,6 +71,11 @@ var ClientNetworkEvents = {
 
   _onPlayerActionEnd: function (data) {
     ige.client.players[data.id].action = '';
+  },
+
+  _leaderboard: function (data) {
+    ige.client.leaderboardList = data;
+    ige.client.leaderboard.displayLeaderboard();
   }
 };
 

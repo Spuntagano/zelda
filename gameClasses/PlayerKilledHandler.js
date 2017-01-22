@@ -9,9 +9,10 @@ var PlayerKilledHandler = IgeClass.extend({
   playerKilled: function(killerEntity, killed) {
     if (killed.alive) {
       new IgeTimeout(function () {
+        
         ige.network.send('playerKilled', {
           killer: killerEntity.shotBy.username,
-          method: killerEntity.killVerb,
+          icon: killerEntity.icon,
           killed: killed.username,
           killedId: killed.id()
         });
@@ -20,15 +21,19 @@ var PlayerKilledHandler = IgeClass.extend({
           killerEntity.destroy();
         }
 
-        new IgeTimeout(function () {
-          killed.destroy();
-        }, 2000);
+        killerEntity.shotBy.killCount++;
 
         Object.keys(ige.server.players).map(function (key) {
           if (ige.server.players[key].id() === killed.id()) {
-            delete ige.server.players[key];
+            var position = ige.server.players[key].worldPosition();
+            new Corpse({position: position})
+              .streamMode(1)
+              .mount(ige.server.scene1);
+
+            ige.server.playerRemoveHandler.playerRemove(key)
           }
         });
+
       }, config.tickRate*2);
     }
     

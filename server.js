@@ -36,6 +36,7 @@ var Server = IgeClass.extend({
             ige.network.define('actionStart');
             ige.network.define('actionEnd');
             ige.network.define('disconnect');
+            ige.network.define('leaderboard');
 
             ige.network.on('connect', self._onPlayerConnect);
 						ige.network.on('disconnect', self._onPlayerDisconnect); 
@@ -57,6 +58,8 @@ var Server = IgeClass.extend({
             ige.box2d.contactListener(contactHandler.contactBegin(), contactHandler.contactEnd(), contactHandler.contactPreSolver());
 
             self.playerKilledHandler = new PlayerKilledHandler();
+            self.playerRemoveHandler = new PlayerRemoveHandler();
+            self.leaderboard = new Leaderboard();
 
 						self.vp1 = new IgeViewport()
 							.id('vp1')

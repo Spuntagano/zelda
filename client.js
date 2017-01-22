@@ -48,6 +48,7 @@ var Client = IgeClass.extend({
           ige.network.define('actionStart', self._onPlayerActionStart);
           ige.network.define('actionEnd', self._onPlayerActionEnd);
           ige.network.define('disconnect', self._onPlayerDisconnect);
+          ige.network.define('leaderboard', self._leaderboard);
 
           // Setup the network stream handler
           ige.network.addComponent(IgeStreamComponent)
@@ -77,6 +78,7 @@ var Client = IgeClass.extend({
             ige.network.send('playerEntity', e.target.username.value);
           };
 
+          self.leaderboard = new Leaderboard();
           new Minimap();
           new KillList();
         });

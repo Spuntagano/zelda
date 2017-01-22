@@ -1,3 +1,3 @@
-kill icon
+kill icon lenght
 spawn force update
-game entity cooldown
+game entity cooldown (action name)

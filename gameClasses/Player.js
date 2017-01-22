@@ -30,6 +30,7 @@ var Player = IgeEntityBox2d.extend({
 
     this.bounds2d(32, 48);
     this.anchor(this.data.anchor.down.x, this.data.anchor.down.y);
+    this.killCount = 0;
 
     this.box2dBody({
       type: 'dynamic',

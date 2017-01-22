@@ -4,12 +4,15 @@ var KillList = IgeClass.extend({
   init: function () {
     var killMessageDisplayLength = 5*1000;
     
-    
     ige.ui.style('.killBox', {
       'left': 10,
-      'width': 1000,
+      'width': 275,
+      'backgroundColor': 'rgba(0,0,0,0.5)'
+    });
+
+    ige.ui.style('.killLabel', {
       'font': 'bold 16px Open Sans',
-      'color': '#000000'
+      'color': '#fff8c5'
     });
     
     new IgeInterval(function() {
@@ -19,12 +22,32 @@ var KillList = IgeClass.extend({
         }
 
         if (new Date() - killMessageDisplayLength < kill.timestamp) {
-          value = kill.killer + ' ' + kill.method + ' ' + kill.killed;
-          kill.label = new IgeUiLabel()
-            .value(value)
+          kill.label = new IgeUiElement()
             .styleClass('killBox')
-            .top(5 + 25 * index)
+            .top(5 + 45 * index)
             .mount(ige.client.ui.uiScene);
+
+          new IgeUiLabel()
+            .value(kill.killer)
+            .styleClass('killLabel')
+            .width(100)
+            .left(5)
+            .mount(kill.label);
+
+          new IgeUiElement()
+            .width(32)
+            .height(32)
+            .left(115)
+            .mount(kill.label)
+            .backgroundImage(new IgeTexture(kill.icon));
+
+          new IgeUiLabel()
+            .value(kill.killed)
+            .styleClass('killLabel')
+            .width(100)
+            .right(5)
+            .mount(kill.label);
+
         } else {
           ige.client.killList.splice(index, 1)
         }

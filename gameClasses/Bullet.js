@@ -81,7 +81,7 @@ var Bullet = GameEntity.extend({
       destroyOnKill: true
     };
 
-    this.killVerb = 'shot';
+    this.icon = './assets/textures/icons/bow.png';
 
     if (ige.isClient) {
       this.shotBy = ige.client.players[this.data.shotBy];

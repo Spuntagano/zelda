@@ -18,7 +18,7 @@ var Explosion = GameEntity.extend({
     };
 
     this.data.rotation = 'down';
-    this.killVerb = 'bombed';
+    this.icon = './assets/textures/icons/bomb.png';
 
     if (ige.isClient) {
       this.addComponent(IgeAnimationComponent);

@@ -74,7 +74,7 @@ var Sword = GameEntity.extend({
       destroyOnKill: false
     };
 
-    this.killVerb = 'slashed';
+    this.icon = './assets/textures/icons/sword.png';
 
     if (ige.isClient) {
       this.addComponent(IgeAnimationComponent);

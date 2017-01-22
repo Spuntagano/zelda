@@ -13,11 +13,10 @@ var ServerNetworkEvents = {
 	},
 
 	_onPlayerDisconnect: function (clientId) {
-		if (ige.server.players[clientId]) {
-			ige.server.players[clientId].destroy();
+    if (ige.server.players[clientId]) {
       ige.network.send('disconnect', ige.server.players[clientId].id());
-			delete ige.server.players[clientId];
-		}
+      ige.server.playerRemoveHandler.playerRemove(clientId);
+    }
 	},
 
 	_onPlayerEntity: function (data, clientId) {
@@ -35,6 +34,7 @@ var ServerNetworkEvents = {
 
 			// Tell the client to track their player entity
 			ige.network.send('playerEntity', ige.server.players[clientId].id(), clientId);
+      ige.network.send('leaderboard', ige.server.leaderboard.generateLeaderboard());
 
       new IgeTimeout(function() {
         Object.keys(ige.server.players).map(function(key) {

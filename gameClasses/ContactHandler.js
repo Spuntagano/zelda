@@ -23,7 +23,7 @@ var ContactHandler = IgeClass.extend({
           var otherEntity = contact.igeOtherEntity(gameEntity);
 
           if (otherEntity.category() === 'Player') {
-            if (gameEntity.shotBy.id() === otherEntity.id()) {
+            if (gameEntity.shotBy && gameEntity.shotBy.id() === otherEntity.id()) {
               if (gameEntity.contactOptions.owner.clip) {
                 contact.SetEnabled(false);
               }

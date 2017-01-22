@@ -74,7 +74,7 @@ var Bomb = GameEntity.extend({
       destroyOnKill: false
     };
     
-    this.killVerb = 'bombed';
+    this.icon = './assets/textures/icons/bomb.png';
 
     this.data.box2dBody = {
       type: 'dynamic',
