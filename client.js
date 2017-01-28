@@ -79,8 +79,9 @@ var Client = IgeClass.extend({
           };
 
           self.leaderboard = new Leaderboard();
-          new Minimap();
+          //new Minimap();
           new KillList();
+          new Cooldown();
         });
       }
 		});

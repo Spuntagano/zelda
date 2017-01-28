@@ -3,7 +3,7 @@ var Bullet = GameEntity.extend({
 
   init: function (data) {
     var self = this;
-    this.data = data;
+    this.data = data || {};
 
     this.data.speed = this.data.speed || {
       up: {

@@ -3,7 +3,7 @@ var Sword = GameEntity.extend({
 
   init: function (data) {
     var self = this;
-    this.data = data;
+    this.data = data || {};
 
     this.data.offset = this.data.offset || {
       up: {

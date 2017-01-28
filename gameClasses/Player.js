@@ -5,7 +5,7 @@ var Player = IgeEntityBox2d.extend({
 		IgeEntityBox2d.prototype.init.call(this);
 
 		var self = this;
-    this.data = data;
+    this.data = data || {};
     this.depth(1);
     this.category('Player');
 
@@ -60,6 +60,7 @@ var Player = IgeEntityBox2d.extend({
     this.movement = 'down';
     this.lastMovement = 'down';
     this.alive = true;
+    this.cooldown = {};
 
     this.speed = {
       left: new IgePoint3d(-4, 0, 0),
@@ -72,44 +73,83 @@ var Player = IgeEntityBox2d.extend({
       downLeft: new IgePoint3d(-4, 4, 0)
     };
 
-    this.anim = {
+    this.actions = {
       slash: {
-        left: 'slashLeft',
-        right: 'slashRight',
-        up: 'slashUp',
-        down: 'slashDown'
+        anim: {
+          left: 'slashLeft',
+          right: 'slashRight',
+          up: 'slashUp',
+          down: 'slashDown'
+        },
+        attack: {
+          cooldown: 0,
+          animationDuration: 8/20*1000,
+          lifeDuration: 8/20*1000,
+          entity: Sword,
+          instant: true
+        }
       },
       shoot: {
-        left: 'shootLeft',
-        right: 'shootRight',
-        up: 'shootUp',
-        down: 'shootDown'
+        anim: {
+          left: 'shootLeft',
+          right: 'shootRight',
+          up: 'shootUp',
+          down: 'shootDown'
+        },
+        attack: {
+          animationDuration: 4/8*1000,
+          lifeDuration: 1000,
+          cooldown: 2000,
+          entity: Bullet,
+          instant: false
+        }
       },
       bomb: {
-        left: 'bombLeft',
-        right: 'bombRight',
-        up: 'bombUp',
-        down: 'bombDown'
+        anim: {
+          left: 'bombLeft',
+          right: 'bombRight',
+          up: 'bombUp',
+          down: 'bombDown'
+        },
+        attack: {
+          animationDuration: 4/8*1000,
+          lifeDuration: 99999,
+          cooldown: 5000,
+          entity: Bomb,
+          instant: false
+        }
       },
       stop: {
-        left: 'stopLeft',
-        right: 'stopRight',
-        up: 'stopUp',
-        down: 'stopDown'
+        anim: {
+          left: 'stopLeft',
+          right: 'stopRight',
+          up: 'stopUp',
+          down: 'stopDown'
+        }
       },
       walk: {
-        left: 'walkLeft',
-        right: 'walkRight',
-        up: 'walkUp',
-        down: 'walkDown'
+        anim: {
+          left: 'walkLeft',
+          right: 'walkRight',
+          up: 'walkUp',
+          down: 'walkDown'
+        }
       },
       death: {
-        left: 'deathLeft',
-        right: 'deathRight',
-        up: 'deathUp',
-        down: 'deathDown'
+        anim: {
+          left: 'deathLeft',
+          right: 'deathRight',
+          up: 'deathUp',
+          down: 'deathDown'
+        }
       }
     };
+
+    Object.keys(this.actions).map(function(key) {
+      if (self.actions[key].attack) {
+        self.cooldown[key] = new Date().getTime() - self.actions[key].attack.cooldown;
+      }
+    });
 
 		if (ige.isClient) {
       this.addComponent(IgeAnimationComponent);
@@ -119,32 +159,31 @@ var Player = IgeEntityBox2d.extend({
         self.texture(self._characterTexture)
           .width(64)
           .height(64);
-          //.dimensionsFromCell();
 
-        self.animation.define(self.anim.walk.down, [85, 86, 87, 88, 89, 90, 91, 92], 12, -1)
-          .animation.define(self.anim.walk.left, [62, 63, 64, 65, 66, 67, 68, 69], 12, -1)
-          .animation.define(self.anim.walk.right, [16, 17, 18, 19, 20, 21, 22, 23], 12, -1)
-          .animation.define(self.anim.walk.up, [39, 40, 41, 42, 43, 44, 45, 46], 12, -1)
-          .animation.define(self.anim.stop.down, [85], 12, 0)
-          .animation.define(self.anim.stop.left, [62], 12, 0)
-          .animation.define(self.anim.stop.right, [16], 12, 0)
-          .animation.define(self.anim.stop.up, [39], 12, 0)
-          .animation.define(self.anim.slash.down, [70, 71, 72, 73, 74, 75, 79, 80, 81, 85], 20, 0)
-          .animation.define(self.anim.slash.left, [47, 48, 49, 50, 51, 52, 56, 57, 58, 62], 20, 0)
-          .animation.define(self.anim.slash.right, [1, 2, 3, 4, 5, 6, 10, 11, 12, 16], 20, 0)
-          .animation.define(self.anim.slash.up, [24, 25, 26, 27, 28, 29, 33, 34, 35, 39], 20, 0)
-          .animation.define(self.anim.shoot.down, [82, 83, 84, 85], 8, 0)
-          .animation.define(self.anim.shoot.left, [59, 60, 61, 62], 8, 0)
-          .animation.define(self.anim.shoot.right, [13, 14, 15, 16], 8, 0)
-          .animation.define(self.anim.shoot.up, [36, 37, 38, 39], 8, 0)
-          .animation.define(self.anim.bomb.down, [162], 12, 0)
-          .animation.define(self.anim.bomb.left, [139], 12, 0)
-          .animation.define(self.anim.bomb.right, [93], 12, 0)
-          .animation.define(self.anim.bomb.up, [116], 12, 0)
-          .animation.define(self.anim.death.down, [184], 12, 0)
-          .animation.define(self.anim.death.left, [184], 12, 0)
-          .animation.define(self.anim.death.right, [184], 12, 0)
-          .animation.define(self.anim.death.up, [184], 12, 0)
+        self.animation.define(self.actions.walk.anim.down, [85, 86, 87, 88, 89, 90, 91, 92], 12, -1)
+          .animation.define(self.actions.walk.anim.left, [62, 63, 64, 65, 66, 67, 68, 69], 12, -1)
+          .animation.define(self.actions.walk.anim.right, [16, 17, 18, 19, 20, 21, 22, 23], 12, -1)
+          .animation.define(self.actions.walk.anim.up, [39, 40, 41, 42, 43, 44, 45, 46], 12, -1)
+          .animation.define(self.actions.stop.anim.down, [85], 12, 0)
+          .animation.define(self.actions.stop.anim.left, [62], 12, 0)
+          .animation.define(self.actions.stop.anim.right, [16], 12, 0)
+          .animation.define(self.actions.stop.anim.up, [39], 12, 0)
+          .animation.define(self.actions.slash.anim.down, [70, 71, 72, 73, 74, 75, 79, 80, 81, 85], 20, 0)
+          .animation.define(self.actions.slash.anim.left, [47, 48, 49, 50, 51, 52, 56, 57, 58, 62], 20, 0)
+          .animation.define(self.actions.slash.anim.right, [1, 2, 3, 4, 5, 6, 10, 11, 12, 16], 20, 0)
+          .animation.define(self.actions.slash.anim.up, [24, 25, 26, 27, 28, 29, 33, 34, 35, 39], 20, 0)
+          .animation.define(self.actions.shoot.anim.down, [82, 83, 84, 85], 8, 0)
+          .animation.define(self.actions.shoot.anim.left, [59, 60, 61, 62], 8, 0)
+          .animation.define(self.actions.shoot.anim.right, [13, 14, 15, 16], 8, 0)
+          .animation.define(self.actions.shoot.anim.up, [36, 37, 38, 39], 8, 0)
+          .animation.define(self.actions.bomb.anim.down, [162], 12, 0)
+          .animation.define(self.actions.bomb.anim.left, [139], 12, 0)
+          .animation.define(self.actions.bomb.anim.right, [93], 12, 0)
+          .animation.define(self.actions.bomb.anim.up, [116], 12, 0)
+          .animation.define(self.actions.death.anim.down, [184], 12, 0)
+          .animation.define(self.actions.death.anim.left, [184], 12, 0)
+          .animation.define(self.actions.death.anim.right, [184], 12, 0)
+          .animation.define(self.actions.death.anim.up, [184], 12, 0)
           .cell(1);
 
       }, false, true);
@@ -156,6 +195,8 @@ var Player = IgeEntityBox2d.extend({
   },
 
 	tick: function (ctx) {
+    var self = this;
+
 		if (ige.isServer) {
 
       if (this.moving && !this.action) {
@@ -234,17 +275,13 @@ var Player = IgeEntityBox2d.extend({
         ige.network.send('playerControl', {rotation: rotation, moving: moving, movement: movement});
       }
 
-      if (ige.input.actionState('shoot')) {
-        ige.network.send('shoot');
-      }
-
-      if (ige.input.actionState('slash')) {
-        ige.network.send('slash');
-      }
-
-      if (ige.input.actionState('bomb')) {
-        ige.network.send('bomb');
-      }
+      Object.keys(this.actions).map(function(key) {
+        if (self.actions[key].attack) {
+          if (ige.input.actionState(key) && (new Date().getTime() > self.cooldown[key] + self.actions[key].attack.cooldown)) {
+            ige.network.send('attack', key);
+          }
+        }
+      });
     }
 
 		IgeEntityBox2d.prototype.tick.call(this, ctx);
@@ -253,11 +290,11 @@ var Player = IgeEntityBox2d.extend({
   update: function (ctx, tickDelta) {
     if (ige.isClient) {
       if (this.action) {
-        this.animation.select(this.anim[this.action][this.rotation]);
+        this.animation.select(this.actions[this.action].anim[this.rotation]);
       } else if (this.moving) {
-        this.animation.select(this.anim.walk[this.rotation]);
+        this.animation.select(this.actions.walk.anim[this.rotation]);
       } else {
-        this.animation.select(this.anim.stop[this.rotation]);
+        this.animation.select(this.actions.stop.anim[this.rotation]);
       }
 
       this.anchor(this.data.anchor[this.rotation].x, this.data.anchor[this.rotation].y);

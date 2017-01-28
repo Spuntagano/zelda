@@ -5,6 +5,7 @@ var igeClientConfig = {
     './gameClasses/GameEntity.js',
     './gameClasses/StaticEntity.js',
     './gameClasses/GameEntityCreator.js',
+    './gameClasses/Cooldown.js',
     './gameClasses/Leaderboard.js',
 		'./gameClasses/Corpse.js',
     './gameClasses/Player.js',

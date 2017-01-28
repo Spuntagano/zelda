@@ -29,9 +29,7 @@ var Server = IgeClass.extend({
             ige.network.define('playerDestroyed');
 
 						ige.network.define('playerControl', self._onPlayerMove);
-            ige.network.define('shoot', self._onPlayerShoot);
-            ige.network.define('slash', self._onPlayerSlash);
-            ige.network.define('bomb', self._onPlayerBomb);
+            ige.network.define('attack', self._onPlayerAttack);
 
             ige.network.define('actionStart');
             ige.network.define('actionEnd');
@@ -42,7 +40,7 @@ var Server = IgeClass.extend({
 						ige.network.on('disconnect', self._onPlayerDisconnect); 
 
 						ige.network.addComponent(IgeStreamComponent)
-							.stream.sendInterval(30) // Send a stream update once every 30 milliseconds
+							.stream.sendInterval(config.tickRate) // Send a stream update once every 30 milliseconds
 							.stream.start(); // Start the stream
 
 						ige.network.acceptConnections(true);

@@ -3,7 +3,7 @@ var House = StaticEntity.extend({
 
   init: function (data) {
     
-    this.data = data;
+    this.data = data || {};
     this.data.spritePath = './assets/textures/house.png';
     this.data.width = 128;
     this.data.height = 188;

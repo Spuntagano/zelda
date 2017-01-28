@@ -3,7 +3,7 @@ var Corpse = GameEntity.extend({
 
   init: function (data) {
     var self = this;
-    this.data = data;
+    this.data = data || {};
 
     this.data.anchor = this.data.anchor || {
         up: {

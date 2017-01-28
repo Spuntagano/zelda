@@ -3,7 +3,10 @@ var Bomb = GameEntity.extend({
 
   init: function (data) {
     var self = this;
-    this.data = data;
+    this.data = data || {};
+
+    this.timeBeforeStop = 200;
+    this.timeBeforeExplose = 1000;
 
     this.data.speed = this.data.speed || {
       up: {
@@ -118,8 +121,8 @@ var Bomb = GameEntity.extend({
           explosion.shotBy = self.shotBy;
 
           self.destroy();
-        }, config.bomb.timeBeforeExplose);
-      }, config.bomb.timeBeforeStop);
+        }, self.timeBeforeExplose);
+      }, self.timeBeforeStop);
     }
 
     GameEntity.prototype.init.call(this, data);

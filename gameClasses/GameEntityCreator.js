@@ -4,10 +4,14 @@ var GameEntityCreator = IgeClass.extend({
   init: function() {
     var self = this;
 
-    self.createGameEntity = function(data, clientId, Entity, cooldown, lifespan, action, instant) {
-      if (ige.server.players[clientId] && !ige.server.players[clientId].action) {
+    self.createGameEntity = function(clientId, Entity, animationLength, lifespan, action, instant, cooldown) {
+      if (ige.server.players[clientId] && !ige.server.players[clientId].action &&
+        (new Date().getTime() > ige.server.players[clientId].cooldown[action] + cooldown)
+      ) {
         ige.server.players[clientId].action = action;
         ige.network.send('actionStart', {id: ige.server.players[clientId].id(), action: action});
+
+        ige.server.players[clientId].cooldown[action] = new Date().getTime();
 
         if (instant) {
           self.createEntity(clientId, Entity, lifespan);
@@ -20,7 +24,7 @@ var GameEntityCreator = IgeClass.extend({
 
           ige.server.players[clientId].action = '';
           ige.network.send('actionEnd', {id: ige.server.players[clientId].id(), action: action});
-        }, (cooldown));
+        }, (animationLength));
       }
     }
   },

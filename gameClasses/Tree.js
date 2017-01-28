@@ -3,7 +3,7 @@ var Tree = StaticEntity.extend({
 
   init: function (data) {
 
-    this.data = data;
+    this.data = data || {};
     this.data.spritePath = './assets/textures/tree.png';
     this.data.width = 128;
     this.data.height = 160;

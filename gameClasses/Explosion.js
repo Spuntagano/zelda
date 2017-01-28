@@ -3,7 +3,7 @@ var Explosion = GameEntity.extend({
 
   init: function (data) {
     var self = this;
-    this.data = data;
+    this.data = data || {};
 
     this.data.contactOptions = {
       owner: {

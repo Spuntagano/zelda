@@ -13,58 +13,81 @@ var ServerNetworkEvents = {
 	},
 
 	_onPlayerDisconnect: function (clientId) {
-    if (ige.server.players[clientId]) {
-      ige.network.send('disconnect', ige.server.players[clientId].id());
-      ige.server.playerRemoveHandler.playerRemove(clientId);
+    try {
+      if (ige.server.players[clientId]) {
+        ige.network.send('disconnect', ige.server.players[clientId].id());
+        ige.server.playerRemoveHandler.playerRemove(clientId);
+      }
+    } catch (e) {
+      ige.log(e);
     }
 	},
 
 	_onPlayerEntity: function (data, clientId) {
-		if (!ige.server.players[clientId]) {
-			ige.server.players[clientId] = new Player({
-        position: {
-          x: config.startingPosition.x || (Math.random()*(config.tiles.count.x - 2) + 1)*config.tiles.size.x,
-          y: config.startingPosition.y || (Math.random()*(config.tiles.count.y - 2) + 1)*config.tiles.size.y,
-          z: 0
-        }})
-				.streamMode(1)
-				.mount(ige.server.scene1);
+    try {
+      if (!ige.server.players[clientId]) {
+        ige.server.players[clientId] = new Player({
+          position: {
+            x: config.startingPosition.x || (Math.random() * (config.tiles.count.x - 2) + 1) * config.tiles.size.x,
+            y: config.startingPosition.y || (Math.random() * (config.tiles.count.y - 2) + 1) * config.tiles.size.y,
+            z: 0
+          }
+        })
+          .streamMode(1)
+          .mount(ige.server.scene1);
 
-      ige.server.players[clientId].username = data;
+        ige.server.players[clientId].username = data;
 
-			// Tell the client to track their player entity
-			ige.network.send('playerEntity', ige.server.players[clientId].id(), clientId);
-      ige.network.send('leaderboard', ige.server.leaderboard.generateLeaderboard());
-
-      new IgeTimeout(function() {
-        Object.keys(ige.server.players).map(function(key) {
-          ige.server.players[key].streamForceUpdate();
+        var players = [];
+        Object.keys(ige.server.players).map(function (key) {
+          var pos = ige.server.players[key].worldPosition();
+          var posObject = {
+            id: ige.server.players[key].id(),
+            x: pos.x,
+            y: pos.y,
+            z: pos.z,
+            rotation: ige.server.players[key].rotation
+          };
+          players.push(posObject)
         });
-      }, config.tickRate);
-		}
+
+        ige.network.send('playerEntity', {id: ige.server.players[clientId].id(), players: players}, clientId);
+        ige.network.send('leaderboard', ige.server.leaderboard.generateLeaderboard());
+      }
+    } catch(e) {
+      ige.log(e);
+    }
 	},
 
   _onPlayerMove: function(data, clientId) {
-    if (ige.server.players[clientId]) {
-      ige.server.players[clientId].moving = data.moving;
+    try {
+      if (ige.server.players[clientId]) {
+        ige.server.players[clientId].moving = data.moving;
 
-      if (!ige.server.players[clientId].action) {
-        ige.server.players[clientId].rotation = data.rotation;
-        ige.server.players[clientId].movement = data.movement;
+        if (!ige.server.players[clientId].action) {
+          ige.server.players[clientId].rotation = data.rotation;
+          ige.server.players[clientId].movement = data.movement;
+        }
       }
+    } catch (e) {
+      ige.log(e);
     }
   },
 
-  _onPlayerSlash: function (data, clientId) {
-    ige.server.gameEntityCreator.createGameEntity(data, clientId, Sword, config.sword.animationDuration, config.sword.lifeDuration, 'slash', true);
-  },
-
-  _onPlayerShoot: function (data, clientId) {
-    ige.server.gameEntityCreator.createGameEntity(data, clientId, Bullet, config.arrow.animationDuration, config.arrow.lifeDuration, 'shoot', false);
-  },
-
-  _onPlayerBomb: function (data, clientId) {
-    ige.server.gameEntityCreator.createGameEntity(data, clientId, Bomb, config.bomb.animationDuration, config.bomb.lifeDuration, 'bomb', false);
+  _onPlayerAttack: function (data, clientId) {
+    try {
+      ige.server.gameEntityCreator.createGameEntity(
+        clientId,
+        ige.server.players[clientId].actions[data].attack.entity,
+        ige.server.players[clientId].actions[data].attack.animationDuration,
+        ige.server.players[clientId].actions[data].attack.lifeDuration,
+        data,
+        ige.server.players[clientId].actions[data].attack.instant,
+        ige.server.players[clientId].actions[data].attack.cooldown
+      );
+    } catch(e) {
+      ige.log(e);
+    }
   }
 };
 

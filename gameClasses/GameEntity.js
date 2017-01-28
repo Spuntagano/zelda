@@ -6,8 +6,16 @@ var GameEntity = IgeEntityBox2d.extend({
 
     var self = this;
     this.depth(11);
-    this.data = data;
+    this.data = data || {};
     this.category('GameEntity');
+
+    this.data.rotation = this.data.rotation || 'down';
+    
+    this.data.position = this.data.position || {
+      x:0, 
+      y:0,
+      z:0
+    };
 
     this.data.speed = this.data.speed || {
         up: {
