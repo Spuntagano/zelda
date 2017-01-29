@@ -1,6 +1,6 @@
 version: '2'
 services:
-    zelda:
+    zelda1:
         build:
             context: .
             args:
@@ -9,3 +9,14 @@ services:
             - /www/zelda:/www/zelda
         ports:
             - 2000:2000
+            - 8000:8000
+    zelda2:
+        build:
+            context: .
+            args:
+                deploy: 1
+        volumes:
+            - /www/zelda:/www/zelda
+        ports:
+            - 2001:2000
+            - 8001:8000

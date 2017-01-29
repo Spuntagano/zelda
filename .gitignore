@@ -3,3 +3,4 @@ assets/js/game.js
 assets/js/config.js
 aws/config
 aws/credentials
+node_modules
