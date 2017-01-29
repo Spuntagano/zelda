@@ -34,10 +34,13 @@ var GameEntityCreator = IgeClass.extend({
     var position = ige.server.players[clientId].worldPosition();
 
     var entity = new Entity({rotation: rotation, position: position, shotBy: ige.server.players[clientId].id()})
-      .streamMode(1)
+      .streamMode(2)
       .lifeSpan(lifespan)
       .mount(ige.server.scene1);
 
+    ige.server.gameEntities[entity.id()] = entity;
+
+    entity.streamSync(Object.keys(ige.server.players));
     entity.shotBy = ige.server.players[clientId];
   }
 

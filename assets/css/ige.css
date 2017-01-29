@@ -44,6 +44,16 @@ body {
     margin-bottom: 15px;
 }
 
+#login label{
+    display: none;
+}
+
+#login select{
+    margin-bottom: 15px;
+    background-color: #ccc;
+    color: #333;
+}
+
 #login button{
     width:  calc(60% - 4px);
     margin-left: 20%;

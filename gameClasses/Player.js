@@ -308,6 +308,10 @@ var Player = IgeEntityBox2d.extend({
       this._characterTexture.destroy();
     }
 
+    if (ige.isServer) {
+      this.streamDestroy();
+    }
+    
     IgeEntityBox2d.prototype.destroy.call(this);
   }
   

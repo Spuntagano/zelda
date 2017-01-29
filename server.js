@@ -17,14 +17,19 @@ var Server = IgeClass.extend({
     });
 
 		this.players = {};
+    this.gameEntities = {};
 		this.implement(ServerNetworkEvents);
     this.gameEntityCreator = new GameEntityCreator();
+    this.api = new Api();
+    
+    this.api.start();
 
 		ige.addComponent(IgeNetIoComponent)
 			.network.start(2000, function () {
 				ige.start(function (success) {
 					if (success) {
 						ige.network.define('playerEntity', self._onPlayerEntity);
+            ige.network.define('playerPosition', self._onPlayerPosition);
             ige.network.define('playerKilled', self._onPlayerKilled); 
             ige.network.define('playerDestroyed');
 
@@ -67,6 +72,7 @@ var Server = IgeClass.extend({
 							.mount(ige);
 
             new StaticEntities();
+            new PositionHandler();
 					}
 				});
 			});

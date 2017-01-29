@@ -124,6 +124,14 @@ var GameEntity = IgeEntityBox2d.extend({
 
   destroy: function () {
     IgeEntityBox2d.prototype.destroy.call(this);
+    if (ige.isServer) {
+      this.streamDestroy();
+      delete ige.server.gameEntities[this.id()];
+    }
+
+    if (ige.isClient) {
+      delete ige.client.gameEntities[this.id()];
+    }
   }
 });
 

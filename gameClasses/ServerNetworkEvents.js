@@ -32,26 +32,16 @@ var ServerNetworkEvents = {
             y: config.startingPosition.y || (Math.random() * (config.tiles.count.y - 2) + 1) * config.tiles.size.y,
             z: 0
           }
-        })
-          .streamMode(1)
+        }).streamMode(2)
           .mount(ige.server.scene1);
 
         ige.server.players[clientId].username = data;
 
-        var players = [];
         Object.keys(ige.server.players).map(function (key) {
-          var pos = ige.server.players[key].worldPosition();
-          var posObject = {
-            id: ige.server.players[key].id(),
-            x: pos.x,
-            y: pos.y,
-            z: pos.z,
-            rotation: ige.server.players[key].rotation
-          };
-          players.push(posObject)
+          ige.server.players[key].streamSync(Object.keys(ige.server.players));
         });
 
-        ige.network.send('playerEntity', {id: ige.server.players[clientId].id(), players: players}, clientId);
+        ige.network.send('playerEntity', {id: ige.server.players[clientId].id()}, clientId);
         ige.network.send('leaderboard', ige.server.leaderboard.generateLeaderboard());
       }
     } catch(e) {

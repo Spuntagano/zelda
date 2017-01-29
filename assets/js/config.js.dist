@@ -1,26 +1,45 @@
 var config = {
-  url: 'http://192.168.99.100',
-  port: 2000,
-  env: 'production',
+  servers: [
+    {
+      name: 'Server 1',
+      server: {
+        url: 'http://192.168.99.100',
+        port: 2000
+      },
+      api: {
+        url: 'http://192.168.99.100',
+        port: 8000
+      }
+    },
+    {
+      name: 'Server 2',
+      server: {
+        url: 'http://192.168.99.100',
+        port: 2001
+      },
+      api: {
+        url: 'http://192.168.99.100',
+        port: 8001
+      }
+    },
+    {
+      name: 'Server 3',
+      server: {
+        url: 'http://192.168.99.100',
+        port: 2002
+      },
+      api: {
+        url: 'http://192.168.99.100',
+        port: 8002
+      }
+    }
+  ],
+  env: 'dev',
   renderLatency: 100,
-  showHitbox: false,
+  showHitbox: true,
   initialCameraPosition: {
     x: 1000,
     y: 1000
-  },
-  bomb: {
-    timeBeforeStop: 200,
-    timeBeforeExplose: 1000,
-    animationDuration: 4/8*1000,
-    lifeDuration: 99999
-  },
-  arrow: {
-    animationDuration: 4/8*1000,
-    lifeDuration: 1000
-  },
-  sword: {
-    animationDuration: 8/20*1000,
-    lifeDuration: 8/20*1000
   },
   tickRate: 30,
   tiles: {
@@ -34,8 +53,8 @@ var config = {
     }
   },
   startingPosition: {
-    x: undefined,
-    y: undefined
+    x: 45*32,
+    y: 45*32
   }
 };
 

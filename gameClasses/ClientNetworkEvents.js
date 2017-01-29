@@ -10,13 +10,6 @@ var ClientNetworkEvents = {
 	_onPlayerEntity: function (data) {
     ige.client.id = data.id;
     
-    data.players.map(function(player) {
-      if (ige.client.players[player.id]) {
-        ige.client.players[player.id].translateTo(player.x, player.y, player.z);
-        ige.client.players[player.id].rotation = player.rotation;
-      }
-    });
-    
 		if (ige.$(data.id)) {
 			ige.client.ui.vp1.camera.trackTranslate(ige.$(data.id), 0);
 		} else {
@@ -42,6 +35,23 @@ var ClientNetworkEvents = {
 		}
 	},
 
+  _onPlayerPosition: function (data) {
+
+    data.players.map(function(player) {
+      if (ige.client.players[player.id]) {
+        ige.client.players[player.id].translateTo(player.x, player.y, player.z);
+        ige.client.players[player.id].rotation = player.rotation;
+      }
+    });
+
+    data.gameEntities.map(function(gameEntity) {
+      if (ige.client.gameEntities[gameEntity.id]) {
+        ige.client.gameEntities[gameEntity.id].translateTo(gameEntity.x, gameEntity.y, gameEntity.z);
+        ige.client.gameEntities[gameEntity.id].rotation = gameEntity.rotation;
+      }
+    });
+  },
+
   _onPlayerDisconnect: function(data) {
     delete ige.client.players[data];
   },
@@ -55,13 +65,17 @@ var ClientNetworkEvents = {
     });
 
     if (ige.client.id === data.killedId) {
+      ige.client.api.call();
       new IgeTimeout(function() {
         document.getElementById('login').style.display = 'block';
       }, 1000);
     }
 
     ige.client.players[data.killedId].action = 'death';
-    delete ige.client.players[data.killedId]
+    new IgeTimeout(function() {
+      ige.client.players[data.killedId].destroy();
+      delete ige.client.players[data.killedId];
+    }, 2000)
   },
 
   _onPlayerMove: function(data) {

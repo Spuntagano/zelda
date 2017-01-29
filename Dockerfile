@@ -29,7 +29,9 @@ RUN cd /www && \
     npm install && \
     npm install -g nodemon && \
     cd /www/ige && \
-    node server/ige.js -deploy ../zelda -to ../zelda/assets/js
+    node server/ige.js -deploy ../zelda -to ../zelda/assets/js && \
+    cd /www/zelda && \
+    npm install
 
 ARG deploy=0
 RUN if [ $deploy -eq 1 ]; then aws s3 rm s3://zelda-jizz --recursive && \
