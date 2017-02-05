@@ -9,6 +9,13 @@ var Player = IgeEntityBox2d.extend({
     this.depth(1);
     this.category('Player');
 
+    /* CEXCLUDE */
+    if (ige.isServer) {
+      this.streamMode(2);
+      this.mount(ige.server.scene1);
+    }
+    /* CEXCLUDE */
+
     this.data.anchor = this.data.anchor || {
         up: {
           x: 5,
@@ -197,8 +204,8 @@ var Player = IgeEntityBox2d.extend({
 	tick: function (ctx) {
     var self = this;
 
+    /* CEXCLUDE */
 		if (ige.isServer) {
-
       if (this.moving && !this.action) {
         this._box2dBody.SetLinearVelocity(this.speed[this.movement]);
       } else {
@@ -213,6 +220,7 @@ var Player = IgeEntityBox2d.extend({
       this.lastRotation = this.rotation;
       this.lastMovement = this.movement;
 		}
+    /* CEXCLUDE */
 
 		if (ige.isClient && ige.client.id === this.id()) {
       
@@ -307,10 +315,11 @@ var Player = IgeEntityBox2d.extend({
     if (this._characterTexture) {
       this._characterTexture.destroy();
     }
-
+    /* CEXCLUDE */
     if (ige.isServer) {
       this.streamDestroy();
     }
+    /* CEXCLUDE */
     
     IgeEntityBox2d.prototype.destroy.call(this);
   }

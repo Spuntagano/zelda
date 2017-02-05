@@ -4,7 +4,8 @@ var Api = IgeClass.extend({
   init: function() {
     var self = this;
   },
-  
+
+  /* CEXCLUDE */
   start: function() {
     var http = require('http');
     var server = http.createServer(function (request, response) {
@@ -23,6 +24,7 @@ var Api = IgeClass.extend({
 
     server.listen(8000);
   },
+  /* CEXCLUDE */
   
   call: function() {
     var serverTag = document.getElementById('server');

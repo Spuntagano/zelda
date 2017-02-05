@@ -13,6 +13,8 @@ var Client = IgeClass.extend({
       .box2d.createWorld()
       .box2d.start();
 
+    ige.client = this;
+    
 		this.implement(ClientNetworkEvents);
     this.ui = new UserInterface();
     this.api = new Api();
@@ -22,6 +24,7 @@ var Client = IgeClass.extend({
     this.killList = [];
     this.players = {};
     this.gameEntities = {};
+    this.staticEntities = {};
     this.username = '';
     
     // Load the Tiled map data and handle the return data
@@ -40,6 +43,8 @@ var Client = IgeClass.extend({
     if (config.showHitbox) {
       ige.box2d.enableDebug(self.ui.scene1);
     }
+
+    new StaticEntities();
 
     // Ask the engine to start
     ige.start(function (success) {
@@ -76,6 +81,11 @@ var Client = IgeClass.extend({
         self.gameEntities[key].destroy();
         delete self.gameEntities[key];
       });
+
+      Object.keys(self.staticEntities).map(function(key) {
+        self.staticEntities[key].destroy();
+        delete self.staticEntities[key];
+      });
       
       // Setup the network command listeners
       ige.network.define('playerEntity', self._onPlayerEntity);
@@ -99,6 +109,10 @@ var Client = IgeClass.extend({
 
         if (entity._category === 'GameEntity') {
           self.gameEntities[entity.id()] = entity;
+        }
+
+        if (entity._category === 'StaticEntity') {
+          self.staticEntities[entity.id()] = entity;
         }
       });
 

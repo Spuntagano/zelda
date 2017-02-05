@@ -29,9 +29,11 @@ var ContactHandler = IgeClass.extend({
               }
 
               if (gameEntity.contactOptions.owner.lethal) {
+                /* CEXCLUDE */
                 if (ige.isServer) {
                   ige.server.playerKilledHandler.playerKilled(gameEntity, otherEntity);
                 }
+                /* CEXCLUDE */
               }
               return;
             }
@@ -41,9 +43,11 @@ var ContactHandler = IgeClass.extend({
             }
 
             if (gameEntity.contactOptions.players.lethal) {
+              /* CEXCLUDE */
               if (ige.isServer) {
                 ige.server.playerKilledHandler.playerKilled(gameEntity, otherEntity);
               }
+              /* CEXCLUDE */
             }
             
             return;

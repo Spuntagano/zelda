@@ -9,6 +9,16 @@ var StaticEntity = IgeEntityBox2d.extend({
     this.bounds2d(this.data.width, this.data.height);
     this.category('StaticEntity');
 
+    /* CEXCLUDE */
+    if (ige.isServer) {
+      this.mount(ige.server.scene1);
+    }
+    /* CEXCLUDE */
+    
+    if (ige.isClient) {
+      this.mount(ige.client.ui.scene1);
+    }
+
     this.box2dBody({
       type: 'static',
       linearDamping: 0.0,

@@ -105,7 +105,7 @@ var Bomb = GameEntity.extend({
       }, false, true);
     }
 
-    
+    /* CEXCLUDE */
     if (ige.isServer) {
       new IgeTimeout(function () {
         self._box2dBody.SetLinearVelocity(new IgePoint3d(0, 0, 0));
@@ -124,6 +124,7 @@ var Bomb = GameEntity.extend({
         }, self.timeBeforeExplose);
       }, self.timeBeforeStop);
     }
+    /* CEXCLUDE */
 
     GameEntity.prototype.init.call(this, data);
   },

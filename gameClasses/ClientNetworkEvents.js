@@ -73,9 +73,11 @@ var ClientNetworkEvents = {
 
     ige.client.players[data.killedId].action = 'death';
     new IgeTimeout(function() {
-      ige.client.players[data.killedId].destroy();
-      delete ige.client.players[data.killedId];
-    }, 2000)
+      if (ige.client.players[data.killedId]) {
+        ige.client.players[data.killedId].destroy();
+        delete ige.client.players[data.killedId];
+      }
+    }, config.tickRate*2)
   },
 
   _onPlayerMove: function(data) {

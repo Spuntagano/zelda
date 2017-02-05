@@ -32,8 +32,7 @@ var ServerNetworkEvents = {
             y: config.startingPosition.y || (Math.random() * (config.tiles.count.y - 2) + 1) * config.tiles.size.y,
             z: 0
           }
-        }).streamMode(2)
-          .mount(ige.server.scene1);
+        });
 
         ige.server.players[clientId].username = data;
 

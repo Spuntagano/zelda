@@ -1,2 +1,7 @@
-minimap optimization
-cexclude
+killstreak
+item drops
+lvl/money system
+loadouts
+ultimates
+skins system
+register system

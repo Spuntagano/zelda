@@ -15,6 +15,7 @@ var igeClientConfig = {
     './gameClasses/Explosion.js',
     './gameClasses/Tree.js',
     './gameClasses/House.js',
+    './gameClasses/StaticEntities.js',
     './gameClasses/Sword.js',
     './gameClasses/UserInterface.js',
     './gameClasses/ContactHandler.js',

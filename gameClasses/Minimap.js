@@ -26,22 +26,37 @@ var Minimap = IgeClass.extend({
         .id('minimap')
         .mount(ige.client.ui.uiScene);
 
-      var minimapEls = [];
+      var minimapDots = {};
       new IgeInterval(function () {
-        minimapEls.map(function (el) {
-          el.destroy();
-        });
-
-        minimapEls = [];
         Object.keys(ige.client.players).map(function (key) {
           var x = ige.client.players[key].worldPosition().x / (config.tiles.count.x * config.tiles.size.x) * 100;
           var y = ige.client.players[key].worldPosition().y / (config.tiles.count.y * config.tiles.size.y) * 100;
 
-          minimapEls.push(new IgeUiElement()
-            .mount(self.minimap)
-            .styleClass('minimapDot')
-            .left(x + '%')
-            .top(y + '%'));
+          if (!minimapDots[key]) {
+            minimapDots[key] = {};
+          }
+
+          minimapDots[key].alive = true;
+
+          if (minimapDots[key].label) {
+            minimapDots[key].label.left(x + '%');
+            minimapDots[key].label.top(y + '%');
+          } else {
+            minimapDots[key].label = new IgeUiElement()
+              .mount(self.minimap)
+              .styleClass('minimapDot')
+              .left(x + '%')
+              .top(y + '%');
+          }
+        });
+
+        Object.keys(minimapDots).map(function(key) {
+          if (!minimapDots[key].alive) {
+            minimapDots[key].label.destroy();
+            delete minimapDots[key];
+          } else {
+            minimapDots[key].alive = false;
+          }
         });
       }, config.tickRate);
     }

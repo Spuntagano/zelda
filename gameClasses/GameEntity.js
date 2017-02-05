@@ -9,6 +9,14 @@ var GameEntity = IgeEntityBox2d.extend({
     this.data = data || {};
     this.category('GameEntity');
 
+    /* CEXCLUDE */
+    if (ige.isServer) {
+      this.streamMode(2);
+      this.mount(ige.server.scene1);
+      this.streamSync(Object.keys(ige.server.players));
+    }
+    /* CEXCLUDE */
+
     this.data.rotation = this.data.rotation || 'down';
     
     this.data.position = this.data.position || {
@@ -106,9 +114,11 @@ var GameEntity = IgeEntityBox2d.extend({
       this.shotBy = ige.client.players[this.data.shotBy];
     }
 
+    /* CEXCLUDE */
     if (ige.isServer) {
       this._box2dBody.SetLinearVelocity(new IgePoint3d(this.data.speed[this.data.rotation].x, this.data.speed[this.data.rotation].y, 0));
     }
+    /* CEXCLUDE */
   },
 
   /**
@@ -124,10 +134,12 @@ var GameEntity = IgeEntityBox2d.extend({
 
   destroy: function () {
     IgeEntityBox2d.prototype.destroy.call(this);
+    /* CEXCLUDE */
     if (ige.isServer) {
       this.streamDestroy();
       delete ige.server.gameEntities[this.id()];
     }
+    /* CEXCLUDE */
 
     if (ige.isClient) {
       delete ige.client.gameEntities[this.id()];

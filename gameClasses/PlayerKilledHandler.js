@@ -26,9 +26,7 @@ var PlayerKilledHandler = IgeClass.extend({
         Object.keys(ige.server.players).map(function (key) {
           if (ige.server.players[key].id() === killed.id()) {
             var position = ige.server.players[key].worldPosition();
-            new Corpse({position: position})
-              .streamMode(1)
-              .mount(ige.server.scene1);
+            new Corpse({position: position});
 
             ige.server.playerRemoveHandler.playerRemove(key)
           }
