@@ -68,16 +68,30 @@ var Player = IgeEntityBox2d.extend({
     this.lastMovement = 'down';
     this.alive = true;
     this.cooldown = {};
+    this.points = 0;
+    this.upgrade = {};
 
     this.speed = {
-      left: new IgePoint3d(-4, 0, 0),
-      right: new IgePoint3d(4, 0, 0),
-      up: new IgePoint3d(0, -4, 0),
-      down: new IgePoint3d(0, 4, 0),
-      leftUp: new IgePoint3d(-4, -4, 0),
-      upRight: new IgePoint3d(4, -4, 0),
-      rightDown: new IgePoint3d(4, 4, 0),
-      downLeft: new IgePoint3d(-4, 4, 0)
+      normal : {
+        left: new IgePoint3d(-4, 0, 0),
+        right: new IgePoint3d(4, 0, 0),
+        up: new IgePoint3d(0, -4, 0),
+        down: new IgePoint3d(0, 4, 0),
+        leftUp: new IgePoint3d(-4, -4, 0),
+        upRight: new IgePoint3d(4, -4, 0),
+        rightDown: new IgePoint3d(4, 4, 0),
+        downLeft: new IgePoint3d(-4, 4, 0)
+      },
+      dash: {
+        left: new IgePoint3d(-50, 0, 0),
+        right: new IgePoint3d(50, 0, 0),
+        up: new IgePoint3d(0, -50, 0),
+        down: new IgePoint3d(0, 50, 0),
+        leftUp: new IgePoint3d(-50, -50, 0),
+        upRight: new IgePoint3d(50, -50, 0),
+        rightDown: new IgePoint3d(50, 50, 0),
+        downLeft: new IgePoint3d(-50, 50, 0)
+      }
     };
 
     this.actions = {
@@ -88,13 +102,7 @@ var Player = IgeEntityBox2d.extend({
           up: 'slashUp',
           down: 'slashDown'
         },
-        attack: {
-          cooldown: 0,
-          animationDuration: 8/20*1000,
-          lifeDuration: 8/20*1000,
-          entity: Sword,
-          instant: true
-        }
+        cooldown: 0
       },
       shoot: {
         anim: {
@@ -103,13 +111,7 @@ var Player = IgeEntityBox2d.extend({
           up: 'shootUp',
           down: 'shootDown'
         },
-        attack: {
-          animationDuration: 4/8*1000,
-          lifeDuration: 1000,
-          cooldown: 2000,
-          entity: Bullet,
-          instant: false
-        }
+        cooldown: 2000
       },
       bomb: {
         anim: {
@@ -118,12 +120,14 @@ var Player = IgeEntityBox2d.extend({
           up: 'bombUp',
           down: 'bombDown'
         },
-        attack: {
-          animationDuration: 4/8*1000,
-          lifeDuration: 99999,
-          cooldown: 5000,
-          entity: Bomb,
-          instant: false
+        cooldown: 5000
+      },
+      dash: {
+        anim: {
+          left: 'stopLeft',
+          right: 'stopRight',
+          up: 'stopUp',
+          down: 'stopDown'
         }
       },
       stop: {
@@ -153,9 +157,7 @@ var Player = IgeEntityBox2d.extend({
     };
 
     Object.keys(this.actions).map(function(key) {
-      if (self.actions[key].attack) {
-        self.cooldown[key] = new Date().getTime() - self.actions[key].attack.cooldown;
-      }
+      self.cooldown[key] = new Date().getTime() - self.actions[key].cooldown;
     });
 
 		if (ige.isClient) {
@@ -206,8 +208,10 @@ var Player = IgeEntityBox2d.extend({
 
     /* CEXCLUDE */
 		if (ige.isServer) {
-      if (this.moving && !this.action) {
-        this._box2dBody.SetLinearVelocity(this.speed[this.movement]);
+      if (this.speed[this.action]) {
+        this._box2dBody.SetLinearVelocity(this.speed[this.action][this.movement]);
+      } else if (this.moving && !this.action) {
+        this._box2dBody.SetLinearVelocity(this.speed.normal[this.movement]);
       } else {
         this._box2dBody.SetLinearVelocity(new IgePoint3d(0, 0, 0));
       }
@@ -284,10 +288,8 @@ var Player = IgeEntityBox2d.extend({
       }
 
       Object.keys(this.actions).map(function(key) {
-        if (self.actions[key].attack) {
-          if (ige.input.actionState(key) && (new Date().getTime() > self.cooldown[key] + self.actions[key].attack.cooldown)) {
-            ige.network.send('attack', key);
-          }
+        if (ige.input.actionState(key) && !ige.client.cooldown.isOnCooldown(self, key)) {
+          ige.network.send('attack', key);
         }
       });
     }

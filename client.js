@@ -128,10 +128,10 @@ var Client = IgeClass.extend({
       ige.box2d.contactListener(contactHandler.contactBegin(), contactHandler.contactEnd(), contactHandler.contactPreSolver());
 
       self.leaderboard = new Leaderboard();
+      self.cooldown = new Cooldown();
 
       new Minimap();
       new KillList();
-      new Cooldown();
 
       e.target.style.display = 'none';
       ige.network.send('playerEntity', e.target.username.value);

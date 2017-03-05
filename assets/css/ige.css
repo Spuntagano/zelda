@@ -15,6 +15,10 @@ body {
     overflow: hidden;
 }
 
+canvas {
+    background-color: #5880c8;
+}
+
 .loadingOverlay {
     position: absolute;
     width: 100vw;

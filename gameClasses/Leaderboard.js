@@ -17,6 +17,7 @@ var Leaderboard = IgeClass.extend({
     }
   },
 
+  /* CEXCLUDE */
   generateLeaderboard: function () {
 
     Object.keys(ige.server.players).sort(function (a, b) {
@@ -44,6 +45,7 @@ var Leaderboard = IgeClass.extend({
 
     return ige.server.leaderboardList;
   },
+  /* CEXCLUDE */
 
   displayLeaderboard: function() {
     if (ige.client.bob) {

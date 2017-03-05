@@ -1,5 +1,5 @@
-var Bomb = IgeClass.extend({
-  classId: 'Bomb',
+var Shoot = IgeClass.extend({
+  classId: 'Shoot',
 
   init: function() {
     var self = this;
@@ -24,8 +24,8 @@ var Bomb = IgeClass.extend({
     };
 
     this.attack = {
-      entity: Explosive,
-      lifeSpan: 99999
+      entity: Bullet,
+      lifeSpan: 1000
     };
 
     this.animationLength = 4/8*1000;
@@ -34,7 +34,7 @@ var Bomb = IgeClass.extend({
   0: function(player) {
     var self = this;
 
-    ige.server.attacks.actionStart(player, 'bomb');
+    ige.server.attacks.actionStart(player, 'shoot');
     new IgeTimeout(function() {
       ige.server.attacks.actionEnd(player);
 
@@ -46,7 +46,7 @@ var Bomb = IgeClass.extend({
           y: player.worldPosition().y + self.offset[player.rotation].y,
           z: player.worldPosition().z
         },
-        rotationZ: 0,
+        rotationZ: rotationZ,
         rotation: player.rotation,
         speed: {
           x: 40*Math.sin(rotationZ),
@@ -65,7 +65,7 @@ var Bomb = IgeClass.extend({
   1: function(player) {
     var self = this;
 
-    ige.server.attacks.actionStart(player, 'bomb');
+    ige.server.attacks.actionStart(player, 'shoot');
     new IgeTimeout(function() {
       ige.server.attacks.actionEnd(player);
 
@@ -78,7 +78,7 @@ var Bomb = IgeClass.extend({
             y: player.worldPosition().y + self.offset[player.rotation].y,
             z: player.worldPosition().z
           },
-          rotationZ: 0,
+          rotationZ: rotationZ,
           rotation: player.rotation,
           speed: {
             x: 40*Math.sin(rotationZ),
@@ -93,8 +93,8 @@ var Bomb = IgeClass.extend({
         );
       }
     }, this.animationLength);
-  }
+  },
 
 });
 
-if (typeof(module) !== 'undefined' && typeof(module.exports) !== 'undefined') { module.exports = Bomb; }
+if (typeof(module) !== 'undefined' && typeof(module.exports) !== 'undefined') { module.exports = Shoot; }

@@ -20,6 +20,11 @@ var Server = IgeClass.extend({
     this.gameEntities = {};
 		this.implement(ServerNetworkEvents);
     this.gameEntityCreator = new GameEntityCreator();
+    this.attacks = new Attacks();
+    this.shoot = new Shoot();
+    this.bomb = new Bomb();
+    this.slash = new Slash();
+    this.cooldown = new Cooldown();
     this.api = new Api();
     
     this.api.start();
@@ -73,6 +78,7 @@ var Server = IgeClass.extend({
 
             new StaticEntities();
             new PositionHandler();
+            self.attacks = new Attacks();
 					}
 				});
 			});

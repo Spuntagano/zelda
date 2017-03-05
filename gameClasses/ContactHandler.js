@@ -55,7 +55,10 @@ var ContactHandler = IgeClass.extend({
 
           if (otherEntity.category() === 'GameEntity') { 
             contact.SetEnabled(false);
+            return;
           }
+
+          contact.SetEnabled(false);
         }
       };
     }

@@ -19,7 +19,7 @@ var ServerNetworkEvents = {
         ige.server.playerRemoveHandler.playerRemove(clientId);
       }
     } catch (e) {
-      ige.log(e);
+      ige.log(e.stack);
     }
 	},
 
@@ -44,7 +44,7 @@ var ServerNetworkEvents = {
         ige.network.send('leaderboard', ige.server.leaderboard.generateLeaderboard());
       }
     } catch(e) {
-      ige.log(e);
+      ige.log(e.stack);
     }
 	},
 
@@ -59,23 +59,15 @@ var ServerNetworkEvents = {
         }
       }
     } catch (e) {
-      ige.log(e);
+      ige.log(e.stack);
     }
   },
 
   _onPlayerAttack: function (data, clientId) {
     try {
-      ige.server.gameEntityCreator.createGameEntity(
-        clientId,
-        ige.server.players[clientId].actions[data].attack.entity,
-        ige.server.players[clientId].actions[data].attack.animationDuration,
-        ige.server.players[clientId].actions[data].attack.lifeDuration,
-        data,
-        ige.server.players[clientId].actions[data].attack.instant,
-        ige.server.players[clientId].actions[data].attack.cooldown
-      );
+      ige.server.attacks.attack(ige.server.players[clientId], data);
     } catch(e) {
-      ige.log(e);
+      ige.log(e.stack);
     }
   }
 };

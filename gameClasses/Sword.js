@@ -5,25 +5,6 @@ var Sword = GameEntity.extend({
     var self = this;
     this.data = data || {};
 
-    this.data.offset = this.data.offset || {
-      up: {
-        x: 0,
-        y: -30
-      },
-      left: {
-        x: -30,
-        y: 0
-      },
-      right: {
-        x: 30,
-        y: 0
-      },
-      down: {
-        x: 0,
-        y: 30
-      }
-    };
-
     this.data.bounds2d = this.data.bounds2d || {
       up: {
         x:72,

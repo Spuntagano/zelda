@@ -22,11 +22,26 @@ var PlayerKilledHandler = IgeClass.extend({
         }
 
         killerEntity.shotBy.killCount++;
+        killerEntity.shotBy.points++;
 
         Object.keys(ige.server.players).map(function (key) {
           if (ige.server.players[key].id() === killed.id()) {
-            var position = ige.server.players[key].worldPosition();
-            new Corpse({position: position});
+            ige.server.gameEntityCreator.createEntity(
+              ige.server.players[key],
+              {
+                lifeSpan: 2000,
+                entity: Corpse
+              },
+              {
+                spawn: ige.server.players[key].worldPosition(),
+                speed:               {
+                  x: 0,
+                  y: 0
+                },
+                rotation: 'down',
+                rotationZ: 0
+              }
+            );
 
             ige.server.playerRemoveHandler.playerRemove(key)
           }

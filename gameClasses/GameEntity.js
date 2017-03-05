@@ -24,7 +24,7 @@ var GameEntity = IgeEntityBox2d.extend({
       y:0,
       z:0
     };
-
+/*
     this.data.speed = this.data.speed || {
         up: {
           x: 0,
@@ -62,7 +62,7 @@ var GameEntity = IgeEntityBox2d.extend({
           y: 0
         }
       };
-
+*/
     this.data.anchor = this.data.anchor || {
         up: {
           x: 0,
@@ -81,13 +81,14 @@ var GameEntity = IgeEntityBox2d.extend({
           y: 0
         }
       };
-
-    this.data.entityRotation = this.data.entityRotation || {
-        up: 0,
-        left: 0,
-        right: 0,
-        down: 0
-      };
+    
+    this.data.spawn = this.data.spawn || {
+      x: 0,
+      y: 0,
+      z: 0
+    };
+    
+    this.data.rotationZ = this.data.rotationZ || 0;
 
     this.contactOptions = this.data.contactOptions || {
         owner: {
@@ -105,10 +106,9 @@ var GameEntity = IgeEntityBox2d.extend({
       this.bounds2d(this.data.bounds2d[this.data.rotation].x, this.data.bounds2d[this.data.rotation].y);
     }
     this.anchor(this.data.anchor[this.data.rotation].x, this.data.anchor[this.data.rotation].y);
-
     this.box2dBody(this.data.box2dBody);
-    this.translateTo(this.data.position.x + this.data.offset[this.data.rotation].x, this.data.position.y + this.data.offset[this.data.rotation].y, this.data.position.z);
-    this.rotateTo(0, 0, Math.radians(this.data.entityRotation[this.data.rotation]));
+    this.translateTo(this.data.spawn.x, this.data.spawn.y, this.data.spawn.z);
+    this.rotateTo(0, 0, this.data.rotationZ);
 
     if (ige.isClient) {
       this.shotBy = ige.client.players[this.data.shotBy];
@@ -116,7 +116,7 @@ var GameEntity = IgeEntityBox2d.extend({
 
     /* CEXCLUDE */
     if (ige.isServer) {
-      this._box2dBody.SetLinearVelocity(new IgePoint3d(this.data.speed[this.data.rotation].x, this.data.speed[this.data.rotation].y, 0));
+      this._box2dBody.SetLinearVelocity(new IgePoint3d(this.data.speed.x, this.data.speed.y, 0));
     }
     /* CEXCLUDE */
   },

@@ -41,12 +41,15 @@ var Corpse = GameEntity.extend({
 
     if (ige.isClient) {
       this.addComponent(IgeAnimationComponent);
-      this._characterTexture = new IgeCellSheet('./assets/textures/corpse.png', 1, 1);
+      this._characterTexture = new IgeCellSheet('./assets/textures/link.png', 23, 8);
 
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
           .width(64)
           .height(64);
+
+        self.animation.define('death', [184], 12, 0).cell(1);
+        self.animation.select('death');
 
       }, false, true);
     }
@@ -67,10 +70,6 @@ var Corpse = GameEntity.extend({
         }
       }]
     };
-
-    new IgeTimeout(function() {
-      self.destroy();
-    }, 2000);
 
     GameEntity.prototype.init.call(this, data);
   },

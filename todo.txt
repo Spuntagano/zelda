@@ -1,7 +1,5 @@
-killstreak
-item drops
-lvl/money system
-loadouts
-ultimates
-skins system
-register system
+attacks system
+color change
+explosion animation
+skin selection
+sword animation
