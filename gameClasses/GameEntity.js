@@ -127,6 +127,9 @@ var GameEntity = IgeEntityBox2d.extend({
    * @param ctx The canvas context to render to.
    */
   tick: function (ctx) {
+    if (!this.shotBy || !this.shotBy.alive) {
+      this.destroy();
+    }
 
     // Call the IgeEntity (super-class) tick() method
     IgeEntityBox2d.prototype.tick.call(this, ctx);

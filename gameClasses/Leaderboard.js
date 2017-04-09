@@ -2,34 +2,52 @@ var Leaderboard = IgeClass.extend({
   classId: 'Leaderboard',
 
   init: function () {
+    var self = this;
+    this.container = {};
+    this.leaderboardList = [];
+    this.leaderboardLength = 10;
 
-    if (ige.isClient) {
-      ige.ui.style('.leaderboardBox', {
-        'right': 10,
-        'width': 275,
-        'backgroundColor': 'rgba(0,0,0,0.5)'
-      });
-
-      ige.ui.style('.leaderboardLabel', {
-        'font': 'bold 16px Open Sans',
-        'color': '#fff8c5'
-      });
-    }
-  },
-
-  /* CEXCLUDE */
-  generateLeaderboard: function () {
-
-    Object.keys(ige.server.players).sort(function (a, b) {
-      return ige.server.players[a].killCount - ige.server.players[b].killCount;
+    ige.ui.style('.leaderboardBox', {
+      'right': 10,
+      'width': 275,
+      'backgroundColor': 'rgba(0,0,0,0.5)'
     });
 
+    ige.ui.style('.leaderboardLabel', {
+      'font': 'bold 16px Open Sans',
+      'color': '#fff8c5'
+    });
+    
+    new IgeInterval(function() {
+      var redraw = false;
+      newLeaderboardList = self.generateLeaderboard();
+
+      if (newLeaderboardList.length !== self.leaderboardList.length) {
+        redraw = true;
+      }
+
+      for (var i = 0; i < self.leaderboardList.length; i++) {
+        if (!_.isEqual(self.leaderboardList[i], newLeaderboardList[i])) {
+          redraw = true;
+        }
+      }
+
+      self.leaderboardList = newLeaderboardList;
+
+
+      if (redraw) {
+        self.draw();
+      }
+
+    }, config.tickRate);
+  },
+
+  generateLeaderboard: function () {
     var leaderboardList = [];
-    ige.server.leaderboardList = [];
-    Object.keys(ige.server.players).map(function (key) {
+    Object.keys(ige.client.players).map(function (key) {
       leaderboardList.push({
-        username: ige.server.players[key].username,
-        killCount: ige.server.players[key].killCount
+        username: ige.client.players[key].username,
+        killCount: ige.client.players[key].killCount
       });
     });
 
@@ -37,44 +55,40 @@ var Leaderboard = IgeClass.extend({
       return b.killCount - a.killCount;
     });
 
-    for (var i = 0; i < 10; i++) {
-      if (leaderboardList[i]) {
-        ige.server.leaderboardList.push(leaderboardList[i]);
-      }
-    }
-
-    return ige.server.leaderboardList;
+    return leaderboardList;
   },
-  /* CEXCLUDE */
 
-  displayLeaderboard: function() {
-    if (ige.client.bob) {
-      ige.client.bob.destroy();
+  draw: function() {
+    var self = this;
+
+    if (typeof this.container.destroy === 'function') {
+      this.container.destroy();
     }
 
-    ige.client.bob = new IgeUiElement()
+    this.container = new IgeUiElement()
       .styleClass('leaderboardBox')
       .top(5)
-      .height(25 * ige.client.leaderboardList.length + 15)
+      .height(25 * this.leaderboardList.length + 15)
       .mount(ige.client.ui.uiScene);
 
-    ige.client.leaderboardList.map(function(player, index) {
+    this.leaderboardList.map(function (player, index) {
+      if (index < self.leaderboardLength) {
+        new IgeUiLabel()
+          .value(player.username)
+          .styleClass('leaderboardLabel')
+          .width(100)
+          .left(5)
+          .top(25 * index)
+          .mount(self.container);
 
-      new IgeUiLabel()
-        .value(player.username)
-        .styleClass('leaderboardLabel')
-        .width(100)
-        .left(5)
-        .top(25 * index)
-        .mount(ige.client.bob);
-
-      new IgeUiLabel()
-        .value(player.killCount)
-        .styleClass('leaderboardLabel')
-        .width(100)
-        .right(5)
-        .top(25 * index)
-        .mount(ige.client.bob);
+        new IgeUiLabel()
+          .value(player.killCount)
+          .styleClass('leaderboardLabel')
+          .width(100)
+          .right(5)
+          .top(25 * index)
+          .mount(self.container);
+      }
     });
   }
 });

@@ -11,7 +11,6 @@ var PlayerRemoveHandler = IgeClass.extend({
       ige.server.players[clientId].destroy();
       delete ige.server.players[clientId];
     }
-    ige.network.send('leaderboard', ige.server.leaderboard.generateLeaderboard());
   }
 });
 

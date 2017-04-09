@@ -5,8 +5,8 @@ var GameEntityCreator = IgeClass.extend({
     var self = this;
   },
 
-  createEntity: function(player, attack, location) {
-    var entity = new attack.entity({rotation: location.rotation, rotationZ: location.rotationZ, speed: location.speed, spawn: location.spawn, shotBy: player.id()})
+  createEntity: function(player, attack, location, data) {
+    var entity = new attack.entity({rotation: location.rotation, rotationZ: location.rotationZ, speed: location.speed, spawn: location.spawn, shotBy: player.id(), data: data})
     ige.server.gameEntities[entity.id()] = entity;
     entity.lifeSpan(attack.lifeSpan);
     entity.shotBy = player;

@@ -34,14 +34,30 @@ var ServerNetworkEvents = {
           }
         });
 
-        ige.server.players[clientId].username = data;
+        var skin = {
+          blue: 'link-blue.png',
+          yellow: 'link-yellow.png',
+          red: 'link-red.png',
+          green: 'link-green.png'
+        };
+
+        ige.server.players[clientId].username = data.username;
+        ige.server.players[clientId].skin = skin[data.skin] || skin.blue;
 
         Object.keys(ige.server.players).map(function (key) {
           ige.server.players[key].streamSync(Object.keys(ige.server.players));
         });
 
+        Object.keys(ige.server.gameEntities).map(function(key) {
+          ige.server.gameEntities[key].streamSync(Object.keys(ige.server.players));
+        });
+
+        Object.keys(ige.server.staticEntities).map(function(key) {
+          ige.server.staticEntities[key].streamSync(Object.keys(ige.server.players));
+        });
+
         ige.network.send('playerEntity', {id: ige.server.players[clientId].id()}, clientId);
-        ige.network.send('leaderboard', ige.server.leaderboard.generateLeaderboard());
+        ige.network.send('playersInfos', ige.server.playersInfos.sync());
       }
     } catch(e) {
       ige.log(e.stack);
@@ -66,6 +82,25 @@ var ServerNetworkEvents = {
   _onPlayerAttack: function (data, clientId) {
     try {
       ige.server.attacks.attack(ige.server.players[clientId], data);
+    } catch(e) {
+      ige.log(e.stack);
+    }
+  },
+
+  _onPlayerUpgrade: function (data, clientId) {
+    try {
+
+      if (ige.server.players[clientId].upgradePoints < 1) {
+        return;
+      }
+
+      ige.server.players[clientId].upgrade[data]++;
+      
+      if (ige.server.players[clientId].upgrade[data] > 1) {
+        ige.server.players[clientId].upgrade[data] = 1;
+      }
+      
+      ige.server.players[clientId].upgradePoints--;
     } catch(e) {
       ige.log(e.stack);
     }

@@ -23,6 +23,9 @@ var Slash = IgeClass.extend({
       }
     };
 
+    this.cooldown = 0;
+    this.icon = './assets/textures/icons/sword.png';
+
     this.attack = {
       entity: Sword,
       lifeSpan: 8/20*1000

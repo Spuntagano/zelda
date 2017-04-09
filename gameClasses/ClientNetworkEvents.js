@@ -57,12 +57,14 @@ var ClientNetworkEvents = {
   },
 
   _onPlayerKilled: function (data) {
-    ige.client.killList.push({
-      killer: data.killer,
+    ige.client.killList.add({
+      killerId: data.killerId,
       icon: data.icon,
-      killed: data.killed,
+      killedId: data.killedId,
       timestamp: new Date()
     });
+
+    ige.client.players[data.killerId].upgradePoints++;
 
     if (ige.client.id === data.killedId) {
       ige.client.api.call();
@@ -97,9 +99,14 @@ var ClientNetworkEvents = {
     ige.client.players[data.id].action = '';
   },
 
-  _leaderboard: function (data) {
-    ige.client.leaderboardList = data;
-    ige.client.leaderboard.displayLeaderboard();
+  _playersInfos: function (data) {
+    Object.keys(data).map(function(key) {
+      Object.keys(data[key]).map(function(keykey) {
+        if (ige.client.players[key]) {
+          ige.client.players[key][keykey] = data[key][keykey];
+        }
+      });
+    });
   }
 };
 

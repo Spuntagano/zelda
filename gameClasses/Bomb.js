@@ -28,6 +28,9 @@ var Bomb = IgeClass.extend({
       lifeSpan: 99999
     };
 
+    this.cooldown = 5000;
+    this.icon = './assets/textures/icons/bomb.png';
+
     this.animationLength = 4/8*1000;
   },
 

@@ -11,9 +11,8 @@ var PlayerKilledHandler = IgeClass.extend({
       new IgeTimeout(function () {
         
         ige.network.send('playerKilled', {
-          killer: killerEntity.shotBy.username,
+          killerId: killerEntity.shotBy.id(),
           icon: killerEntity.icon,
-          killed: killed.username,
           killedId: killed.id()
         });
 
@@ -22,19 +21,19 @@ var PlayerKilledHandler = IgeClass.extend({
         }
 
         killerEntity.shotBy.killCount++;
-        killerEntity.shotBy.points++;
+        killerEntity.shotBy.upgradePoints++;
 
         Object.keys(ige.server.players).map(function (key) {
           if (ige.server.players[key].id() === killed.id()) {
             ige.server.gameEntityCreator.createEntity(
-              ige.server.players[key],
+              killerEntity.shotBy,
               {
                 lifeSpan: 2000,
                 entity: Corpse
               },
               {
                 spawn: ige.server.players[key].worldPosition(),
-                speed:               {
+                speed: {
                   x: 0,
                   y: 0
                 },
@@ -47,6 +46,7 @@ var PlayerKilledHandler = IgeClass.extend({
           }
         });
 
+        ige.network.send('playersInfos', ige.server.playersInfos.sync());
       }, config.tickRate*2);
     }
     

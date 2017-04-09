@@ -9,62 +9,83 @@ var Cooldown = IgeClass.extend({
 
     var self = this;
     this.label = {};
+    this.element = {};
+    this.bg = {};
+    this.points = {};
+
+    ige.ui.style('.pointsBox', {
+      'bottom': 20,
+      'width': 20,
+      'height': 20,
+      'left': 370,
+      'font': 'bold 16px Open Sans',
+      'color': '#fff8c5',
+      'backgroundColor': 'rgba(0,0,0,0.5)'
+    });
 
     ige.ui.style('.cooldownBox', {
-      'left': 10,
-      'width': 70,
+      'bottom': 10,
+      'width': 45,
       'backgroundColor': 'rgba(0,0,0,0.5)'
     });
 
     ige.ui.style('.cooldownLabel', {
       'font': 'bold 16px Open Sans',
-      'color': '#fff8c5'
+      'color': '#fff8c5',
+      'width': 45,
+      'paddingLeft': 19
+    });
+    
+    ige.client.attacks.attacks.map(function(attack, index) {
+      self.element[attack] = new IgeUiElement()
+        .styleClass('cooldownBox')
+        .left(400 + 45 * index)
+        .mount(ige.client.ui.uiScene);
+
+      self.label[attack] = new IgeUiLabel()
+          .styleClass('cooldownLabel')
+          .left(0)
+          .mount(self.element[attack]);
+
+      self.bg[attack] = new IgeUiLabel()
+          .width(32)
+          .height(32)
+          .left(5)
+          .mount(self.element[attack]);
     });
 
-    new IgeInterval(function () {
+    self.points = new IgeUiLabel()
+      .styleClass('pointsBox')
+      .mount(ige.client.ui.uiScene);
 
+    var cooldown = 0;
+    new IgeInterval(function () {
       if (!ige.client.players[ige.client.id]) {
         return;
       }
+      
+      ige.client.attacks.attacks.map(function(attack) {
+        cooldown = Math.floor((ige.client.players[ige.client.id].cooldown[attack] + ige.client[attack].cooldown - new Date().getTime()) / 1000);
 
-      var cooldown = -1;
-      var i = 0;
-      Object.keys(ige.client.players[ige.client.id].actions).map(function (key) {
-        cooldown = Math.floor((ige.client.players[ige.client.id].cooldown[key] + ige.client.players[ige.client.id].actions[key].cooldown - new Date().getTime()) / 1000);
+        self.points.value(ige.client.players[ige.client.id].upgradePoints);
+        self.bg[attack].backgroundImage(new IgeTexture(ige.client[attack].icon));
 
-        if (self.label[key]) {
-          self.label[key].destroy();
-        }
-
-        if (cooldown >= 0) {
-
-          self.label[key] = new IgeUiElement()
-            .styleClass('cooldownBox')
-            .bottom(100 + 45 * i)
-            .mount(ige.client.ui.uiScene);
-
-          new IgeUiElement()
-            .width(32)
-            .height(32)
-            .left(10)
-            .mount(self.label[key])
-            //.backgroundImage(new IgeTexture(new ige.client.players[ige.client.id].actions[key].attack.entity().icon));
-
-          new IgeUiLabel()
-            .value(cooldown)
-            .styleClass('cooldownLabel')
-            .left(45)
-            .mount(self.label[key]);
-
-          i++;
-        }
+        self.label[attack]
+          .value((cooldown >= 0) ? cooldown : '')
+          .backgroundColor((cooldown >= 0) ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0)')
       });
-
     }, config.tickRate);
   },
 
   isOnCooldown: function(player, action) {
-    return !(player && !player.action && (new Date().getTime() > player.cooldown[action] + player.actions[action].cooldown));
+    if (ige.isClient) {
+      return !(player && !player.action && (new Date().getTime() > player.cooldown[action] + ige.client[action].cooldown));
+    }
+    /* CEXCLUDE */
+    if (ige.isServer) {
+      return !(player && !player.action && (new Date().getTime() > player.cooldown[action] + ige.server[action].cooldown));
+    }
+    /* CEXCLUDE */
   }
 
 });

@@ -1,5 +1,5 @@
-var Shoot = IgeClass.extend({
-  classId: 'Shoot',
+var Fire = IgeClass.extend({
+  classId: 'Fire',
 
   init: function() {
     var self = this;
@@ -7,29 +7,31 @@ var Shoot = IgeClass.extend({
     this.offset = {
       up: {
         x: 0,
-        y: -30
+        y: -40
       },
       left: {
-        x: -30,
+        x: -40,
         y: 0
       },
       right: {
-        x: 30,
+        x: 40,
         y: 0
       },
       down: {
         x: 0,
-        y: 30
+        y: 40
       }
     };
     
-    this.cooldown = 2000;
-    this.icon = './assets/textures/icons/bow.png';
+    this.cooldown = 4000;
+    this.icon = './assets/textures/icons/fire.png';
 
     this.attack = {
-      entity: Bullet,
-      lifeSpan: 1000
+      entity: Flame,
+      lifeSpan: 7000
     };
+
+    this.charges = 10;
 
     this.animationLength = 4/8*1000;
   },
@@ -37,11 +39,9 @@ var Shoot = IgeClass.extend({
   0: function(player) {
     var self = this;
 
-    ige.server.attacks.actionStart(player, 'shoot');
+    ige.server.attacks.actionStart(player, 'fire');
     new IgeTimeout(function() {
       ige.server.attacks.actionEnd(player);
-
-      var rotationZ = ige.server.attacks.rotateZ[player.rotation];
 
       var location = {
         spawn: {
@@ -49,22 +49,26 @@ var Shoot = IgeClass.extend({
           y: player.worldPosition().y + self.offset[player.rotation].y,
           z: player.worldPosition().z
         },
-        rotationZ: rotationZ,
+        rotationZ: 0,
         rotation: player.rotation,
         speed: {
-          x: 40*Math.sin(rotationZ),
-          y: -40*Math.cos(rotationZ)
+          x: 0,
+          y: 0
         }
       };
 
       ige.server.gameEntityCreator.createEntity(
         player,
         self.attack,
-        location
+        location,
+        {
+          charges: self.charges,
+          offset: self.offset
+        }
       );
     }, this.animationLength);
-  },
-
+  }
+/*
   1: function(player) {
     var self = this;
 
@@ -97,7 +101,7 @@ var Shoot = IgeClass.extend({
       }
     }, this.animationLength);
   },
-
+*/
 });
 
-if (typeof(module) !== 'undefined' && typeof(module.exports) !== 'undefined') { module.exports = Shoot; }
+if (typeof(module) !== 'undefined' && typeof(module.exports) !== 'undefined') { module.exports = Fire; }

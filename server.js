@@ -18,13 +18,16 @@ var Server = IgeClass.extend({
 
 		this.players = {};
     this.gameEntities = {};
+    this.staticEntities = {};
 		this.implement(ServerNetworkEvents);
     this.gameEntityCreator = new GameEntityCreator();
     this.attacks = new Attacks();
     this.shoot = new Shoot();
     this.bomb = new Bomb();
     this.slash = new Slash();
+    this.fire = new Fire();
     this.cooldown = new Cooldown();
+    this.playersInfos = new PlayersInfos();
     this.api = new Api();
     
     this.api.start();
@@ -40,11 +43,12 @@ var Server = IgeClass.extend({
 
 						ige.network.define('playerControl', self._onPlayerMove);
             ige.network.define('attack', self._onPlayerAttack);
+            ige.network.define('upgrade', self._onPlayerUpgrade);
 
             ige.network.define('actionStart');
             ige.network.define('actionEnd');
             ige.network.define('disconnect');
-            ige.network.define('leaderboard');
+            ige.network.define('playersInfos');
 
             ige.network.on('connect', self._onPlayerConnect);
 						ige.network.on('disconnect', self._onPlayerDisconnect); 
@@ -67,7 +71,6 @@ var Server = IgeClass.extend({
 
             self.playerKilledHandler = new PlayerKilledHandler();
             self.playerRemoveHandler = new PlayerRemoveHandler();
-            self.leaderboard = new Leaderboard();
 
 						self.vp1 = new IgeViewport()
 							.id('vp1')

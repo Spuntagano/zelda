@@ -21,12 +21,16 @@ var Client = IgeClass.extend({
     
     this.api.call();
     
-    this.killList = [];
     this.players = {};
     this.gameEntities = {};
     this.staticEntities = {};
     this.username = '';
-    
+    this.attacks = new Attacks();
+    this.shoot = new Shoot();
+    this.bomb = new Bomb();
+    this.slash = new Slash();
+    this.fire = new Fire();
+
     // Load the Tiled map data and handle the return data
     ige.addComponent(IgeTiledComponent)
       .tiled.loadJson(map, function (layerArray, layersById) {
@@ -45,6 +49,11 @@ var Client = IgeClass.extend({
     }
 
     new StaticEntities();
+    self.leaderboard = new Leaderboard();
+    self.cooldown = new Cooldown();
+
+    new Minimap();
+    self.killList = new KillList();
 
     // Ask the engine to start
     ige.start(function (success) {
@@ -95,7 +104,7 @@ var Client = IgeClass.extend({
       ige.network.define('actionStart', self._onPlayerActionStart);
       ige.network.define('actionEnd', self._onPlayerActionEnd);
       ige.network.define('disconnect', self._onPlayerDisconnect);
-      ige.network.define('leaderboard', self._leaderboard);
+      ige.network.define('playersInfos', self._playersInfos);
 
       // Setup the network stream handler
       ige.network.addComponent(IgeStreamComponent)
@@ -122,19 +131,18 @@ var Client = IgeClass.extend({
       ige.input.mapAction('down', ige.input.key.down);
       ige.input.mapAction('shoot', ige.input.key.space);
       ige.input.mapAction('slash', ige.input.key.q);
-      ige.input.mapAction('bomb', ige.input.key.e);
+      ige.input.mapAction('bomb', ige.input.key.w);
+      ige.input.mapAction('fire', ige.input.key.e);
+      ige.input.mapAction('upgradeSlash', ige.input.key[1]);
+      ige.input.mapAction('upgradeShoot', ige.input.key[2]);
+      ige.input.mapAction('upgradeBomb', ige.input.key[3]);
+      ige.input.mapAction('upgradeFire', ige.input.key[4]);
 
       var contactHandler = new ContactHandler();
       ige.box2d.contactListener(contactHandler.contactBegin(), contactHandler.contactEnd(), contactHandler.contactPreSolver());
 
-      self.leaderboard = new Leaderboard();
-      self.cooldown = new Cooldown();
-
-      new Minimap();
-      new KillList();
-
       e.target.style.display = 'none';
-      ige.network.send('playerEntity', e.target.username.value);
+      ige.network.send('playerEntity', { username: e.target.username.value, skin: e.target.skin.value });
     });
   }
 });

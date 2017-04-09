@@ -1,5 +1,5 @@
-attacks system
-color change
 explosion animation
-skin selection
 sword animation
+map
+change colors
+socket/player seperation

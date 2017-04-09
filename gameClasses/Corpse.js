@@ -41,7 +41,7 @@ var Corpse = GameEntity.extend({
 
     if (ige.isClient) {
       this.addComponent(IgeAnimationComponent);
-      this._characterTexture = new IgeCellSheet('./assets/textures/link.png', 23, 8);
+      this._characterTexture = new IgeCellSheet('./assets/textures/' + ige.client.players[self.data.shotBy].skin, 23, 8);
 
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)

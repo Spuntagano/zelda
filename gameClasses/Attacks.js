@@ -10,6 +10,8 @@ var Attacks = IgeClass.extend({
       right: Math.PI/2,
       down: Math.PI
     };
+
+    this.attacks = ['slash', 'shoot', 'bomb', 'fire'];
   },
 
   attack: function(player, data) {
@@ -18,12 +20,8 @@ var Attacks = IgeClass.extend({
     if (ige.server.cooldown.isOnCooldown(player, data)) {
       return;
     }
-
-    if (player.upgrade[data]) {
-      ige.server[data][player.upgrade[data]](player);
-    } else {
-      ige.server[data][0](player);
-    }
+    
+    ige.server[data][player.upgrade[data]](player);
   },
 
   actionStart: function(player, action) {

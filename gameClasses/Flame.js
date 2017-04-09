@@ -1,5 +1,5 @@
-var Bullet = GameEntity.extend({
-  classId: 'Bullet',
+var Flame = GameEntity.extend({
+  classId: 'Flame',
 
   init: function (data) {
     var self = this;
@@ -27,24 +27,24 @@ var Bullet = GameEntity.extend({
     this.data.contactOptions = {
       owner: {
         clip: true,
-        lethal: false
+        lethal: true
       },
       players: {
         clip: true,
         lethal: true
       },
-      destroyOnKill: true
+      destroyOnKill: false
     };
     
-    this.icon = './assets/textures/icons/bow.png';
+    this.icon = './assets/textures/icons/fire.png';
 
     if (ige.isClient) {
       this.shotBy = ige.client.players[this.data.shotBy];
-      this._characterTexture = new IgeCellSheet('./assets/textures/arrow.png', 1, 1);
+      this._characterTexture = new IgeCellSheet('./assets/textures/flame.png', 1, 1);
       this._characterTexture.on('loaded', function () {
         self.texture(self._characterTexture)
-          .width(10)
-          .height(30)
+          .width(32)
+          .height(32)
       }, false, true);
     }
 
@@ -65,6 +65,39 @@ var Bullet = GameEntity.extend({
       }]
     };
     
+    /* CEXCLUDE */
+    if (ige.isServer) {
+      if (this.data.data.charges > 0) {
+        new IgeTimeout(function () {
+          ige.server.gameEntityCreator.createEntity(
+            self.shotBy,
+            {
+              lifeSpan: 7000,
+              entity: Flame
+            },
+            {
+              spawn: {
+                x: self.worldPosition().x + self.data.data.offset[self.data.rotation].x,
+                y: self.worldPosition().y + self.data.data.offset[self.data.rotation].y,
+                z: 0
+              },
+              speed: {
+                x: 0,
+                y: 0
+              },
+              rotation: self.data.rotation,
+              rotationZ: 0
+            },
+            {
+              charges: self.data.data.charges - 1,
+              offset: self.data.data.offset
+            }
+          );
+        }, 300);
+      }
+    }
+    /* CEXCLUDE */
+
     GameEntity.prototype.init.call(this, data);
   },
 
@@ -84,4 +117,4 @@ var Bullet = GameEntity.extend({
   }
 });
 
-if (typeof(module) !== 'undefined' && typeof(module.exports) !== 'undefined') { module.exports = Bullet; }
+if (typeof(module) !== 'undefined' && typeof(module.exports) !== 'undefined') { module.exports = Flame; }
